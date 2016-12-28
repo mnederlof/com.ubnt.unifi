@@ -1,0 +1,12 @@
+{
+    "id": "com.ubnt.unifi",
+    "name": {
+        "en": "Ubiquity Unifi"
+    },
+    "version": "0.0.1",
+    "compatibility": "1.x",
+    "author": {
+        "name": "Michel Nederlof",
+        "email": "michel@nederlof.info"
+    }
+}

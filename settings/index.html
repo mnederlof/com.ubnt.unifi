@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+    <head>
+
+    </head>
+    <body>
+
+        <h1>Ubiquity Unifi Settings (<i>com.ubnt.unifi</i>)</h1>
+        <p>On this page, you will be able to adjust the settings of the Ubiquity Unifi app.</p>
+
+        <p id="error" style="color: red;"></p>
+        <p id="success" style="color: #5fd225;"></p>
+
+        <fieldset>
+            <legend>Unifi Controller settings</legend>
+
+            <div class="field row">
+                <label for="unifi_host">Host</label>
+                <input id="unifi_host" type="text" value="" />
+            </div>
+            <div class="field row">
+                <label for="unifi_port">Port</label>
+                <input id="unifi_port" type="number" value="" min="1" max="65535" />
+            </div>
+            <div class="field row">
+                <label for="unifi_user">Username</label>
+                <input id="unifi_user" type="text" value="" />
+            </div>
+            <div class="field row">
+                <label for="unifi_pass">Password</label>
+                <input id="unifi_pass" type="password" value="" />
+            </div>
+
+        </fieldset>
+
+        <button class="right" id="saver" onclick="save()">Save changes</button>
+
+        <script type="text/javascript">
+        function onHomeyReady(){
+            Homey.get('com.ubnt.unifi.settings', function(err,data) {
+            	console.log(data);
+            	document.getElementById('unifi_host').value = data['host'];
+	            document.getElementById('unifi_port').value = data['port'];
+	            document.getElementById('unifi_user').value = data['user'];
+	            document.getElementById('unifi_pass').value = data['pass'];
+            });
+            Homey.ready();
+        }
+
+        function save() {
+            // Retrieve DOM elements
+            var button = document.getElementById('saver'),
+                unifi_host = document.getElementById('unifi_host'),
+                unifi_port = document.getElementById('unifi_port'),
+                unifi_user = document.getElementById('unifi_user'),
+                unifi_pass = document.getElementById('unifi_pass'),
+                error = document.getElementById('error'),
+                success = document.getElementById('success');
+            // Define update status
+            var update = "true";
+            // // Check if news articles exceed limit; change status if the case
+            // if(!isInteger(newsBlock.value)) { update = "noInt"; }
+            // if (newsBlock.value > 8) { update = "trueHigh" };
+            // if (newsBlock.value < 1) { update = "trueLow" };
+            // Show message in the save button
+            if(update === "true") {
+                // Set both disabled onSave
+                button.disabled = true;
+                success.innerHTML = "Changes saved";
+                error.innerHTML = "";
+
+                // Change the settings in Homey.
+                Homey.set('com.ubnt.unifi.settings', {
+                	'host': unifi_host.value,
+                	'port': unifi_port.value,
+                	'user': unifi_user.value,
+                	'pass': unifi_pass.value
+                });
+
+                // Return to edit mode after 3.5 seconds
+                setTimeout(function() {
+                    button.disabled = false;
+                    success.innerHTML = "";
+                },3500);
+            }
+            else {
+                if(update === "trueHigh") {
+                    error.innerHTML="ERROR: you selected too many news articles. The maximum is 8 articles.";
+                }
+                else if (update === "noInt") {
+                    error.innerHTML="ERROR: you did not provide an integer. You need to provide an integer between 1 and 8.";
+                }
+                else {
+                    error.innerHTML="ERROR: you selected too few news articles. The minimum is 1 article.";
+                }
+            }
+        }
+        </script>
+
+    </body>
+</html>
