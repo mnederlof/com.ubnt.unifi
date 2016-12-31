@@ -1,0 +1,30 @@
+{
+  // Details: https://github.com/victorporof/Sublime-JSHint#using-your-own-jshintrc-options
+  // Example: https://github.com/jshint/jshint/blob/master/examples/.jshintrc
+  // Documentation: http://www.jshint.com/docs/
+  "esversion": 6,
+  "node": true,
+  "globals": { },
+  "globalstrict": true,
+  "quotmark": true,
+  "undef": true,
+  "unused": true,
+  "predef": [
+    "-Promise",
+    "protractor",
+    "by",
+    "element",
+    "it",
+    "describe",
+    "beforeEach",
+    "afterEach",
+    "beforeAll",
+    "afterAll",
+    "expect",
+    "jasmine",
+    "protractor",
+    "Promise",
+    "angular",
+    "browser"
+  ]
+}

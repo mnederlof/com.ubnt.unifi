@@ -8,5 +8,385 @@
     "author": {
         "name": "Michel Nederlof",
         "email": "michel@nederlof.info"
-    }
+    },
+    "category": [
+        "security"
+    ],
+    "images": {
+        "large": "/assets/images/large.png",
+        "small": "/assets/images/small.png"
+    },
+    "capabilities": {
+        "alarm_connected": {
+            "type": "boolean",
+            "title": {
+                "en": "Connection state",
+                "en": "Verbindingsstatus"
+            },
+            "getable": true,
+            "setable": false
+        },
+        "measure_signal": {
+            "type": "number",
+            "title": {
+                "en": "Signal strength",
+                "nl": "Signaalsterkte"
+            },
+            "units": {
+                "en": "%",
+                "nl": "%"
+            },
+            "getable": true,
+            "setable": false,
+            "min": 0,
+            "max": 100,
+            "step": 1
+        },
+        "measure_rssi": {
+            "type": "number",
+            "title": {
+                "en": "RSSI",
+                "nl": "RSSI"
+            },
+            "units": {
+                "en": "dBm",
+                "nl": "dBm"
+            },
+            "getable": true,
+            "setable": false,
+            "min": -100,
+            "max": 0,
+            "step": 1
+        }
+    },
+    "flow": {
+        "triggers": [
+            {
+                "id": "wifi_client_connected",
+                "title": {
+                    "en": "Connected",
+                    "nl": "Verbonden"
+                },
+                "args": [
+                    {
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=wifi-client"
+                    }
+                ],
+                "tokens": [
+                    {
+                        "name": "rssi",
+                        "type": "number",
+                        "title": {
+                            "en": "dBm",
+                            "nl": "dBm"
+                        },
+                        "example": -75
+                    },
+                    {
+                        "name": "signal",
+                        "type": "number",
+                        "title": {
+                            "en": "%",
+                            "nl": "%"
+                        },
+                        "example": 75
+                    }
+                ]
+            },
+            {
+                "id": "wifi_client_disconnected",
+                "title": {
+                    "en": "Disconnected",
+                    "nl": "Verbinding verbroken"
+                },
+                "args": [
+                    {
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=wifi-client"
+                    }
+                ]
+            },
+            {
+                "id": "wifi_client_roamed",
+                "title": {
+                    "en": "Roams between AP",
+                    "nl": "Wisselt van AP"
+                },
+                "args": [
+                    {
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=wifi-client"
+                    }
+                ],
+                "tokens": [
+                    {
+                        "name": "accessPoint",
+                        "type": "string",
+                        "title": {
+                            "en": "AP",
+                            "nl": "AP"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "wifi_client_roamed_to_ap",
+                "title": {
+                    "en": "Roams to AP",
+                    "nl": "Wisselt naar AP"
+                },
+                "args": [
+                    {
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=wifi-client"
+                    },
+                    {
+                        "name": "accessPoint",
+                        "type": "autocomplete",
+                        "placeholder": {
+                            "en": "AP name",
+                            "nl": "AP naam"
+                        }
+                    }
+                ],
+                "tokens": [
+                    {
+                        "name": "accessPoint",
+                        "type": "string",
+                        "title": {
+                            "en": "AP",
+                            "nl": "AP"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "a_client_connected",
+                "title": {
+                    "en": "Device just connected",
+                    "nl": "Apparaat verbonden met wifi"
+                },
+                "tokens": [
+                    {
+                        "name": "mac",
+                        "type": "string",
+                        "title": {
+                            "en": "mac",
+                            "nl": "mac"
+                        },
+                        "example": {
+                            "en": "00:00:00:00:00:00",
+                            "nl": "00:00:00:00:00:00"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "title": {
+                            "en": "Who",
+                            "nl": "Wie"
+                        },
+                        "example": {
+                            "en": "wifi01",
+                            "nl": "wifi01"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "a_client_disconnected",
+                "title": {
+                    "en": "Wifi connection lost",
+                    "nl": "Wifi connectie verloren"
+                },
+                "tokens": [
+                    {
+                        "name": "mac",
+                        "type": "string",
+                        "title": {
+                            "en": "mac"
+                        },
+                        "example": {
+                            "en": "00:00:00:00:00:00",
+                            "nl": "00:00:00:00:00:00"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "title": {
+                            "en": "Who",
+                            "nl": "Wie"
+                        },
+                        "example": {
+                            "en": "wifi01",
+                            "nl": "wifi01"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "first_device_connected",
+                "title": {
+                    "en": "First device connected",
+                    "nl": "Eerste apparaat verbonden"
+                },
+                "args": [
+                    {
+                        "name": "accessPoint",
+                        "type": "autocomplete",
+                        "placeholder": {
+                            "en": "AP name",
+                            "nl": "AP naam"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "last_device_disconnected",
+                "title": {
+                    "en": "Last device disconnected",
+                    "nl": "Laatste verbinding verbroken"
+                },
+                "args": [
+                    {
+                        "name": "accessPoint",
+                        "type": "autocomplete",
+                        "placeholder": {
+                            "en": "AP name",
+                            "nl": "AP naam"
+                        }
+                    }
+                ]
+            }
+        ],
+        "conditions": [
+            {
+                "id": "wifi_client_connected",
+                "title": {
+                    "en": "!{{Connected|Disconnected}}",
+                    "nl": "!{{Verbonden|Verbinding verbroken}}"
+                },
+                "args": [
+                    {
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=wifi-client"
+                    }
+                ],
+                "tokens": [
+                    {
+                        "name": "rssi",
+                        "type": "number",
+                        "title": {
+                            "en": "dBm"
+                        },
+                        "example": -75
+                    },
+                    {
+                        "name": "signal",
+                        "type": "number",
+                        "title": {
+                            "en": "%"
+                        },
+                        "example": 75
+                    }
+                ]
+            },
+            {
+                "id": "wifi_client_connected_with_ap",
+                "title": {
+                    "en": "!{{C|Disc}}onnected with Accesspoint",
+                    "nl": "!{{V|Niet v}}erbonden met accesspoint"
+                },
+                "args": [
+                    {
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=wifi-client"
+                    },
+                    {
+                        "name": "accessPoint",
+                        "type": "autocomplete",
+                        "placeholder": {
+                            "en": "Accesspoint name",
+                            "nl": "Accesspoint naam"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "drivers": [
+        {
+            "id": "wifi-client",
+            "name": {
+                "en": "Wifi Client",
+                "nl": "Wifi Client"
+            },
+            "mobile": {
+                "components": [
+                    {
+                        "id": "icon"
+                    },
+                    {
+                        "id": "sensor",
+                        "capabilities": [ "alarm_connected", "measure_rssi",  "measure_signal" ],
+                        "options": {
+                            "icons": {
+                                "alarm_connected": "assets/connected.svg",
+                                "measure_signal": "assets/signal.svg",
+                                "measure_rssi": "assets/rssi.svg"
+                            },
+
+                            "alarm_connected": {
+                                "noblink": false,
+                                "invert": true,
+                                "label": {
+                                    "true": {
+                                        "en": "Connected"
+                                    },
+                                    "false": {
+                                        "en": "Disconnected"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "images": {
+                "large": "drivers/wifi-client/assets/images/large.jpg",
+                "small": "drivers/wifi-client/assets/images/small.jpg"
+            },
+            "class": "sensor",
+            "capabilities": [ "alarm_connected", "measure_rssi",  "measure_signal" ],
+            "pair": [
+                {
+                    "id": "list_clients",
+                    "template": "list_devices",
+                    "navigation": {
+                        "next": "add_clients"
+                    }
+                },
+                {
+                    "id": "add_clients",
+                    "template": "add_devices"
+                }
+            ]
+        }
+    ]
 }

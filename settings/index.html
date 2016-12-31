@@ -30,6 +30,10 @@
                 <label for="unifi_pass">Password</label>
                 <input id="unifi_pass" type="password" value="" />
             </div>
+            <div class="field row">
+                <label for="unifi_site">Site</label>
+                <input id="unifi_site" type="text" value="" />
+            </div>
 
         </fieldset>
 
@@ -38,11 +42,12 @@
         <script type="text/javascript">
         function onHomeyReady(){
             Homey.get('com.ubnt.unifi.settings', function(err,data) {
-            	console.log(data);
-            	document.getElementById('unifi_host').value = data['host'];
-	            document.getElementById('unifi_port').value = data['port'];
-	            document.getElementById('unifi_user').value = data['user'];
-	            document.getElementById('unifi_pass').value = data['pass'];
+                console.log(data);
+                document.getElementById('unifi_host').value = data['host'];
+                document.getElementById('unifi_port').value = data['port'];
+                document.getElementById('unifi_user').value = data['user'];
+                document.getElementById('unifi_pass').value = data['pass'];
+                document.getElementById('unifi_site').value = data['site'];
             });
             Homey.ready();
         }
@@ -54,6 +59,7 @@
                 unifi_port = document.getElementById('unifi_port'),
                 unifi_user = document.getElementById('unifi_user'),
                 unifi_pass = document.getElementById('unifi_pass'),
+                unifi_site = document.getElementById('unifi_site'),
                 error = document.getElementById('error'),
                 success = document.getElementById('success');
             // Define update status
@@ -71,10 +77,11 @@
 
                 // Change the settings in Homey.
                 Homey.set('com.ubnt.unifi.settings', {
-                	'host': unifi_host.value,
-                	'port': unifi_port.value,
-                	'user': unifi_user.value,
-                	'pass': unifi_pass.value
+                    'host': unifi_host.value,
+                    'port': unifi_port.value,
+                    'user': unifi_user.value,
+                    'pass': unifi_pass.value,
+                    'site': unifi_site.value
                 });
 
                 // Return to edit mode after 3.5 seconds
