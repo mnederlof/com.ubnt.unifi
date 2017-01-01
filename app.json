@@ -117,7 +117,7 @@
                 "id": "wifi_client_roamed",
                 "title": {
                     "en": "Roams between AP",
-                    "nl": "Wisselt van AP"
+                    "nl": "Zwerft naar ander AP"
                 },
                 "args": [
                     {
@@ -145,7 +145,7 @@
                 "id": "wifi_client_roamed_to_ap",
                 "title": {
                     "en": "Roams to AP",
-                    "nl": "Wisselt naar AP"
+                    "nl": "Zwerft naar AP"
                 },
                 "args": [
                     {
