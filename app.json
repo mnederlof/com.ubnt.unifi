@@ -1,7 +1,7 @@
 {
     "id": "com.ubnt.unifi",
     "name": {
-        "en": "Ubiquity Unifi"
+        "en": "Ubiquiti Unifi"
     },
     "description": {
         "en": "Adds support for presence detection based on (wifi) clients connected to the Unifi Controller",

@@ -1,4 +1,4 @@
-# Ubiquity Unifi Controller
+# Ubiquiti Unifi Controller
 This app adds support for presence detection based on (wifi) clients connected to the Unifi Controller on your Homey.
 
 Device triggers:
@@ -28,7 +28,7 @@ Please note: only paired devices are being considered as device in all flow cont
 
 For supported accesspoints, see [Unifi download page](https://www.ubnt.com/download/unifi/) for more information.
 
-This version has been tested against version 5.3.x of the Ubiquity Unifi Controller software.
+This version has been tested against version 5.3.x of the Ubiquiti Unifi Controller software.
 
 ## Supported Languages:
 * English
@@ -36,4 +36,4 @@ This version has been tested against version 5.3.x of the Ubiquity Unifi Control
 
 ## Change Log:
 **0.0.1:**
-Initial release for Ubiquity Unifi controller
+Initial release for Ubiquiti Unifi controller

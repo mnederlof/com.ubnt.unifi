@@ -1,6 +1,6 @@
 {
 	"settings": {
-		"title": "Ubiquity Unifi Instellingen",
+		"title": "Ubiquiti Unifi Instellingen",
 		"intro": "Op deze pagina kun je de verbindingsstatus bekijken en de instellingen aanpassen.",
 		"status": "Verbindingsstatus",
 		"last_poll": {
