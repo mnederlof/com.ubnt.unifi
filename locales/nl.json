@@ -1,1 +1,36 @@
-{}
+{
+	"settings": {
+		"title": "Ubiquity Unifi Instellingen",
+		"intro": "Op deze pagina kun je de verbindingsstatus bekijken en de instellingen aanpassen.",
+		"status": "Verbindingsstatus",
+		"last_poll": {
+			"title": "Laatste update",
+			"waiting_for_event": "... wachtend op volgende update ...",
+			"poll_interval": "(indien verbonden, update iedere 15 seconden)"
+		},
+		"fieldset": {
+			"title": "Unifi Controller instellingen",
+			"host": "Host",
+			"port": "Poort",
+			"user": "Gebruikersnaam",
+			"pass": "Wachtwoord",
+			"site": "Site"
+		},
+		"button": {
+			"apply": "Toepassen"
+		},
+		"notice": {
+			"restart": "* Als je alleen de connectie wilt herstarten, klik dan de knop &quot;Toepassen&quot; nogmaals."
+		},
+		"alert": {
+			"changes-saved": "Instellingen toegepast, verbinding wordt opgezet."
+		}
+	},
+	"status": {
+		"connection": {
+			"Offline": "Verbinding verbroken",
+			"Connecting...": "Bezig met verbinden...",
+			"Connected": "Verbonden"
+		}
+	}
+}

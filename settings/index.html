@@ -5,43 +5,43 @@
     </head>
     <body>
 
-        <h1>Ubiquity Unifi Settings (<i>com.ubnt.unifi</i>)</h1>
-        <p>On this page you will be able to see current connection status and adjust the settings of this app.</p>
-        <p>Status: <span id="unifi_status" style="font-weight: bold;"></span><br />
-           Last poll: <span id="unifi_lastPoll">... waiting for successfull poll event ...</span> <small>(should update every 15 seconds)</small></p>
+        <h1 data-i18n="settings.title">Ubiquity Unifi Settings</h1>
+        <p data-i18n="settings.intro">On this page you will be able to see current connection status and adjust the settings of this app.</p>
+        <p><span data-i18n="settings.status">Status</span>: <span id="unifi_status" style="font-weight: bold;">Unknown</span><br />
+           <span data-i18n="settings.last_poll.title">Last Poll</span>: <span id="unifi_lastPoll" data-i18n="settings.last_poll.waiting_for_event">... waiting for event...</span> <small data-i18n="settings.last_poll.poll_interval">(should update every 15 seconds)</small></p>
 
         <p id="error" style="color: red;"></p>
         <p id="success" style="color: #5fd225;"></p>
 
         <fieldset>
-            <legend>Unifi Controller settings</legend>
+            <legend data-i18n="settings.fieldset.title"></legend>
 
             <div class="field row">
-                <label for="unifi_host">Host</label>
+                <label for="unifi_host" data-i18n="settings.fieldset.host">Host</label>
                 <input id="unifi_host" type="text" value="" />
             </div>
             <div class="field row">
-                <label for="unifi_port">Port</label>
+                <label for="unifi_port" data-i18n="settings.fieldset.port">Port</label>
                 <input id="unifi_port" type="number" value="" min="1" max="65535" />
             </div>
             <div class="field row">
-                <label for="unifi_user">Username</label>
+                <label for="unifi_user" data-i18n="settings.fieldset.user">User</label>
                 <input id="unifi_user" type="text" value="" />
             </div>
             <div class="field row">
-                <label for="unifi_pass">Password</label>
+                <label for="unifi_pass" data-i18n="settings.fieldset.pass">Pass</label>
                 <input id="unifi_pass" type="password" value="" />
             </div>
             <div class="field row">
-                <label for="unifi_site">Site</label>
+                <label for="unifi_site" data-i18n="settings.fieldset.site">Site</label>
                 <input id="unifi_site" type="text" value="" />
             </div>
 
         </fieldset>
 
-        <p><small>* If you just want to restart the connection, then click &quot;Apply&quot; again</small></p>
+        <p><small data-i18n="settings.notice.restart">* If you just want to restart the connection, then click &quot;Apply&quot; again</small></p>
 
-        <button class="right" id="saver" onclick="save()">Apply</button>
+        <button class="right" id="saver" onclick="save()" data-i18n="settings.button.apply">Send</button>
 
         <script type="text/javascript">
         function onHomeyReady(){
@@ -66,8 +66,15 @@
 
                 var statusField = document.getElementById('unifi_status');
                 statusField.style.color = color;
-                statusField.innerHTML = data;
-                setTimeout(updateStatus, (5 * 1000));
+
+                var translationKey = 'status.connection.' + data;
+                var translation = __(translationKey);
+
+                if (translation === translationKey || translation === '' || typeof translation === 'undefined') {
+                    statusField.innerHTML = data;
+                } else {
+                    statusField.innerHTML = translation;
+                }
             }
 
             Homey.get('com.ubnt.unifi.status', updateStatusField);
@@ -87,44 +94,27 @@
                 error = document.getElementById('error'),
                 success = document.getElementById('success');
             // Define update status
-            var update = "true";
-            // // Check if news articles exceed limit; change status if the case
-            // if(!isInteger(newsBlock.value)) { update = "noInt"; }
-            // if (newsBlock.value > 8) { update = "trueHigh" };
-            // if (newsBlock.value < 1) { update = "trueLow" };
+
             // Show message in the save button
-            if(update === "true") {
-                // Set both disabled onSave
-                button.disabled = true;
-                success.innerHTML = "Changes saved";
-                error.innerHTML = "";
+            // Set both disabled onSave
+            button.disabled = true;
+            success.innerHTML = __("settings.alert.changes-saved");
+            error.innerHTML = "";
 
-                // Change the settings in Homey.
-                Homey.set('com.ubnt.unifi.settings', {
-                    'host': unifi_host.value,
-                    'port': unifi_port.value,
-                    'user': unifi_user.value,
-                    'pass': unifi_pass.value,
-                    'site': unifi_site.value
-                });
+            // Change the settings in Homey.
+            Homey.set('com.ubnt.unifi.settings', {
+                'host': unifi_host.value,
+                'port': unifi_port.value,
+                'user': unifi_user.value,
+                'pass': unifi_pass.value,
+                'site': unifi_site.value
+            });
 
-                // Return to edit mode after 3.5 seconds
-                setTimeout(function() {
-                    button.disabled = false;
-                    success.innerHTML = "";
-                },3500);
-            }
-            else {
-                if(update === "trueHigh") {
-                    error.innerHTML="ERROR: you selected too many news articles. The maximum is 8 articles.";
-                }
-                else if (update === "noInt") {
-                    error.innerHTML="ERROR: you did not provide an integer. You need to provide an integer between 1 and 8.";
-                }
-                else {
-                    error.innerHTML="ERROR: you selected too few news articles. The minimum is 1 article.";
-                }
-            }
+            // Return to edit mode after 3.5 seconds
+            setTimeout(function() {
+                button.disabled = false;
+                success.innerHTML = "";
+            },3500);
         }
         </script>
 

@@ -1,1 +1,29 @@
-{}
+{
+	"settings": {
+		"title": "Ubiquity Unifi Settings",
+		"intro": "On this page you will be able to see current connection status and adjust the settings of this app.",
+		"status": "Connection Status",
+		"last_poll": {
+			"title": "Last poll",
+			"waiting_for_event": "... waiting for successfull poll event ...",
+			"poll_interval": "(should update every 15 seconds)"
+		},
+		"fieldset": {
+			"title": "Unifi Controller settings",
+			"host": "Host",
+			"port": "Port",
+			"user": "Username",
+			"pass": "Password",
+			"site": "Site"
+		},
+		"button": {
+			"apply": "Apply"
+		},
+		"notice": {
+			"restart": "* If you just want to restart the connection, then click &quot;Apply&quot; again."
+		},
+		"alert": {
+			"changes-saved": "Settings saved, connection is being initiated.s"
+		}
+	}
+}
