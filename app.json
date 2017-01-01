@@ -3,6 +3,10 @@
     "name": {
         "en": "Ubiquity Unifi"
     },
+    "description": {
+        "en": "Adds support for presence detection based on (wifi) clients connected to the Unifi Controller",
+        "nl": "Ondersteuning voor aanwezigheids detectie op basis van (wifi) devices verbonden met de Unifi Controller"
+    },
     "version": "0.0.1",
     "compatibility": "1.x",
     "author": {
