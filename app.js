@@ -4,6 +4,9 @@ function init() {
 	
 	Homey.log("com.ubnt.unifi started...");
 	
+	// Reset status to offline (until the driver is connected)
+	Homey.manager('settings').set('com.ubnt.unifi.status', 'Offline');
+
 	let appSettings = Homey.manager('settings').get('com.ubnt.unifi.settings');
 	// Homey.log('Current appSettings: ', appSettings);
 

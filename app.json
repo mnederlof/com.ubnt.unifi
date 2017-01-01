@@ -344,7 +344,7 @@
                     },
                     {
                         "id": "sensor",
-                        "capabilities": [ "alarm_connected", "measure_rssi",  "measure_signal" ],
+                        "capabilities": [ "alarm_connected",  "measure_signal", "measure_rssi" ],
                         "options": {
                             "icons": {
                                 "alarm_connected": "assets/connected.svg",

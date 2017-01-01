@@ -21,6 +21,7 @@ class unifi {
         this._debug('Options: ', this.options);
 
         this.initialized = false;
+        this.attempt = 0;
         this.settingKey = 'com.ubnt.unifi.settings';
         this.unifi = {};
 
@@ -65,7 +66,6 @@ class unifi {
                 this.initializeApi();
             }
         }.bind(this));
-        // this.baseUrl = 'https://' + this.settings['host'] + ':' + this.settings['port'];
     }
 
     initializeApi() {
@@ -82,8 +82,11 @@ class unifi {
             'ignoreSsl': true,
             'timeout': (10 * 1000),
         };
+        const attempt = ++this.attempt;
 
-        // this._debug('Creating new controller connection with options', options);
+        this._debug('Creating new controller connection');
+        Homey.manager('settings').set('com.ubnt.unifi.status', 'Connecting...');
+        Homey.manager('api').realtime('com.ubnt.unifi.status', 'Connecting...');
         ubiquitiUnifi(options).then(
             unifiController => {
                 this._debug('Got login session')
@@ -97,14 +100,41 @@ class unifi {
                 this.updateAccessPointList();
                 this.updateClientList();
                 this.updateOfflineClients();
+
+                Homey.manager('settings').set('com.ubnt.unifi.status', 'Connected');
+                Homey.manager('api').realtime('com.ubnt.unifi.status', 'Connected');
                 this._debug('Login success', this.unifi)
             },
             err => {
+                if (attempt !== this.attempt) {
+                    this._debug('Ignore failed attempt', attempt, 'current attempt', this.attempt);
+                    return;
+                }
                 this._debug('Login failed?', err)
                 this.initialized = false;
 
                 for (var id in this.devices) {
                     module.exports.setUnavailable( this.devices[id].data, "Offline" );
+                }
+
+                Homey.manager('settings').set('com.ubnt.unifi.status', 'Offline');
+                Homey.manager('api').realtime('com.ubnt.unifi.status', 'Offline');
+                Homey.manager('api').realtime('com.ubnt.unifi.lastPoll', { lastPoll: Date.now() });
+                // {
+                //     [HTTPError: Response code 503 (Service Unavailable)]
+                //     message: 'Response code 503 (Service Unavailable)',
+                //     host: '192.168.1.20:8443',
+                //     hostname: '192.168.1.20',
+                //     method: 'POST',
+                //     path: '/api/login',
+                //     statusCode: 503,
+                //     statusMessage: 'Service Unavailable'
+                // }
+                if (
+                    (typeof err.statusCode !== 'undefined' && err.statusCode === 503) ||
+                    (typeof err.code !== 'undefined' && err.code === 'ECONNREFUSED')
+                    ) {
+                    setTimeout(this.initializeApi, (60 * 1000));
                 }
             } 
         );
@@ -137,6 +167,9 @@ class unifi {
                     };
                 });
                 this.offlineClientList = devices;
+
+                // Update time of last successfull poll
+                Homey.manager('api').realtime('com.ubnt.unifi.lastPoll', { lastPoll: Date.now() });
             }, err => { 
                 this._debug("Error during getAllUser", err);
 
@@ -381,6 +414,9 @@ class unifi {
                         num_clients: null,
                     };
                 })
+
+                // Update time of last successfull poll
+                Homey.manager('api').realtime('com.ubnt.unifi.lastPoll', { lastPoll: Date.now() });
             }, err => { 
                 this._debug('Error while updating accesspoint list', err);
 
@@ -556,6 +592,8 @@ class unifi {
                     }
                 }
 
+                // Update time of last successfull poll
+                Homey.manager('api').realtime('com.ubnt.unifi.lastPoll', { lastPoll: Date.now() });
             }, err => {
                 this._debug('Got error while updating client list', err);
 

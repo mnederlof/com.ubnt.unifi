@@ -6,7 +6,9 @@
     <body>
 
         <h1>Ubiquity Unifi Settings (<i>com.ubnt.unifi</i>)</h1>
-        <p>On this page, you will be able to adjust the settings of the Ubiquity Unifi app.</p>
+        <p>On this page you will be able to see current connection status and adjust the settings of this app.</p>
+        <p>Status: <span id="unifi_status" style="font-weight: bold;"></span><br />
+           Last poll: <span id="unifi_lastPoll">... waiting for successfull poll event ...</span> <small>(should update every 15 seconds)</small></p>
 
         <p id="error" style="color: red;"></p>
         <p id="success" style="color: #5fd225;"></p>
@@ -37,18 +39,40 @@
 
         </fieldset>
 
-        <button class="right" id="saver" onclick="save()">Save changes</button>
+        <p><small>* If you just want to restart the connection, then click &quot;Apply&quot; again</small></p>
+
+        <button class="right" id="saver" onclick="save()">Apply</button>
 
         <script type="text/javascript">
         function onHomeyReady(){
             Homey.get('com.ubnt.unifi.settings', function(err,data) {
-                console.log(data);
+                // console.log(data);
                 document.getElementById('unifi_host').value = data['host'];
                 document.getElementById('unifi_port').value = data['port'];
                 document.getElementById('unifi_user').value = data['user'];
                 document.getElementById('unifi_pass').value = data['pass'];
                 document.getElementById('unifi_site').value = data['site'];
             });
+            // let driver = Homey.manager( 'drivers' ).getDriver('wifi-client');
+            // console.log(driver);
+            Homey.on( 'com.ubnt.unifi.lastPoll', function( data ){
+                console.log( data );
+                document.getElementById('unifi_lastPoll').innerHTML = new Date(data.lastPoll).toLocaleString();
+            });
+            var updateStatusField =  (err, data) => {
+                var color = 'darkred';
+                if (data === 'Connected') color = 'darkgreen';
+                if (data === 'Connecting...') color = 'orange';
+
+                var statusField = document.getElementById('unifi_status');
+                statusField.style.color = color;
+                statusField.innerHTML = data;
+                setTimeout(updateStatus, (5 * 1000));
+            }
+
+            Homey.get('com.ubnt.unifi.status', updateStatusField);
+            Homey.on('com.ubnt.unifi.status', ( data ) => { updateStatusField(null, data); });
+
             Homey.ready();
         }
 
