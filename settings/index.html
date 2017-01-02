@@ -44,22 +44,8 @@
         <button class="right" id="saver" onclick="save()" data-i18n="settings.button.apply">Send</button>
 
         <script type="text/javascript">
-        function onHomeyReady(){
-            Homey.get('com.ubnt.unifi.settings', function(err,data) {
-                // console.log(data);
-                document.getElementById('unifi_host').value = data['host'];
-                document.getElementById('unifi_port').value = data['port'];
-                document.getElementById('unifi_user').value = data['user'];
-                document.getElementById('unifi_pass').value = data['pass'];
-                document.getElementById('unifi_site').value = data['site'];
-            });
-            // let driver = Homey.manager( 'drivers' ).getDriver('wifi-client');
-            // console.log(driver);
-            Homey.on( 'com.ubnt.unifi.lastPoll', function( data ){
-                console.log( data );
-                document.getElementById('unifi_lastPoll').innerHTML = new Date(data.lastPoll).toLocaleString();
-            });
-            var updateStatusField =  (err, data) => {
+        function updateStatus(){
+           var updateStatusField =  (err, data) => {
                 var color = 'darkred';
                 if (data === 'Connected') color = 'darkgreen';
                 if (data === 'Connecting...') color = 'orange';
@@ -79,6 +65,25 @@
 
             Homey.get('com.ubnt.unifi.status', updateStatusField);
             Homey.on('com.ubnt.unifi.status', ( data ) => { updateStatusField(null, data); });
+        }
+
+        function onHomeyReady(){
+            Homey.get('com.ubnt.unifi.settings', function(err,data) {
+                // console.log(data);
+                document.getElementById('unifi_host').value = data['host'];
+                document.getElementById('unifi_port').value = data['port'];
+                document.getElementById('unifi_user').value = data['user'];
+                document.getElementById('unifi_pass').value = data['pass'];
+                document.getElementById('unifi_site').value = data['site'];
+            });
+            // let driver = Homey.manager( 'drivers' ).getDriver('wifi-client');
+            // console.log(driver);
+            Homey.on( 'com.ubnt.unifi.lastPoll', function( data ){
+                console.log( data );
+                document.getElementById('unifi_lastPoll').innerHTML = new Date(data.lastPoll).toLocaleString();
+            });
+            
+            updateStatus();
 
             Homey.ready();
         }
@@ -110,10 +115,13 @@
                 'site': unifi_site.value
             });
 
+            updateStatus();
+
             // Return to edit mode after 3.5 seconds
             setTimeout(function() {
                 button.disabled = false;
                 success.innerHTML = "";
+                updateStatus();
             },3500);
         }
         </script>
