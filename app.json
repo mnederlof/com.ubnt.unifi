@@ -1,11 +1,11 @@
 {
     "id": "com.ubnt.unifi",
     "name": {
-        "en": "Ubiquiti Unifi"
+        "en": "Ubiquiti UniFi"
     },
     "description": {
-        "en": "Adds support for presence detection based on (wifi) clients connected to the Unifi Controller",
-        "nl": "Ondersteuning voor aanwezigheids detectie op basis van (wifi) devices verbonden met de Unifi Controller"
+        "en": "Adds support for presence detection based on (wifi) clients connected to the UniFi Controller",
+        "nl": "Ondersteuning voor aanwezigheids detectie op basis van (wifi) devices verbonden met de UniFi Controller"
     },
     "version": "0.0.1",
     "compatibility": "1.x",

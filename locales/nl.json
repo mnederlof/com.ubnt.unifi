@@ -1,6 +1,6 @@
 {
 	"settings": {
-		"title": "Ubiquiti Unifi Instellingen",
+		"title": "Ubiquiti UniFi Instellingen",
 		"intro": "Op deze pagina kun je de verbindingsstatus bekijken en de instellingen aanpassen.",
 		"status": "Verbindingsstatus",
 		"last_poll": {
@@ -9,7 +9,7 @@
 			"poll_interval": "(indien verbonden, update iedere 15 seconden)"
 		},
 		"fieldset": {
-			"title": "Unifi Controller instellingen",
+			"title": "UniFi Controller instellingen",
 			"host": "Host",
 			"port": "Poort",
 			"user": "Gebruikersnaam",

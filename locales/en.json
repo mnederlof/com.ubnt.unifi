@@ -1,6 +1,6 @@
 {
 	"settings": {
-		"title": "Ubiquiti Unifi Settings",
+		"title": "Ubiquiti UniFi Settings",
 		"intro": "On this page you will be able to see current connection status and adjust the settings of this app.",
 		"status": "Connection Status",
 		"last_poll": {
@@ -9,7 +9,7 @@
 			"poll_interval": "(should update every 15 seconds)"
 		},
 		"fieldset": {
-			"title": "Unifi Controller settings",
+			"title": "UniFi Controller settings",
 			"host": "Host",
 			"port": "Port",
 			"user": "Username",
