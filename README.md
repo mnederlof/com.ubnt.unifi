@@ -36,4 +36,4 @@ This version has been tested against version 5.3.x of the Ubiquiti UniFi Control
 
 ## Change Log:
 **0.0.1:**
-Initial release for Ubiquiti UniFi controller
+Initial release for Ubiquiti UniFi app
