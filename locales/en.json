@@ -22,6 +22,11 @@
 		"notice": {
 			"restart": "* If you just want to restart the connection, then click &quot;Apply&quot; again."
 		},
+		"debug": {
+			"title": "Debug messages",
+			"intro": "Up to 100 messages are shown below, in reverse order (newest on top):",
+			"wait_msg": "Messages will come in automatically..."
+		},
 		"alert": {
 			"changes-saved": "Settings saved, connection is being initiated.s"
 		}

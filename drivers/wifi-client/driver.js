@@ -21,6 +21,7 @@ class unifi {
         this._debug('Options: ', this.options);
 
         this.initialized = false;
+        this.reconnecting = false;
         this.attempt = 0;
         this.settingKey = 'com.ubnt.unifi.settings';
         this.unifi = {};
@@ -68,6 +69,42 @@ class unifi {
         }.bind(this));
     }
 
+    updateStatus(status) {
+        Homey.manager('settings').set('com.ubnt.unifi.status', status);
+        Homey.manager('api').realtime('com.ubnt.unifi.status', status);
+        this._debug(`Updating status to ${status}`);
+    }
+
+    reInitializeApi(err) {
+        // If already in the progress of reconnecting, then don't do anything
+        if (this.reconnecting) return;
+
+        // Reset initialized state to false
+        this.initialized = false;
+
+        // Update status to Offline.
+        this.updateStatus('Offline');
+
+        let reconnect = false;
+        // Reconnect if it is a recoverable error
+        if (typeof err.statusCode !== 'undefined') {
+            if (err.statusCode === 503) reconnect = true;
+        }
+        if (typeof err.code !== 'undefined' && err.code === 'ECONNREFUSED') reconnect = true;
+
+        if (reconnect) {
+            this._debug('Reconnecting in 30 seconds')
+            this.reconnecting = true;
+
+            // Call initializeApi again
+            setTimeout(function() { this.initializeApi(); }.bind(this), (30 * 1000));
+            return;
+        }
+
+        // Not doing anything, update the user.
+        this._debug('Fatal error, not reconnecting...');
+    }
+
     initializeApi() {
         this.initialized = false;
 
@@ -85,13 +122,14 @@ class unifi {
         const attempt = ++this.attempt;
 
         this._debug('Creating new controller connection');
-        Homey.manager('settings').set('com.ubnt.unifi.status', 'Connecting...');
-        Homey.manager('api').realtime('com.ubnt.unifi.status', 'Connecting...');
+        this.updateStatus('Connecting...');
+
         ubiquitiUnifi(options).then(
             unifiController => {
                 this._debug('Got login session')
                 this.unifi = unifiController;
                 this.initialized = true;
+                this.reconnecting = false;
 
                 for (var id in this.devices) {
                     module.exports.setAvailable( this.devices[id].data, "Offline" );
@@ -101,9 +139,8 @@ class unifi {
                 this.updateClientList();
                 this.updateOfflineClients();
 
-                Homey.manager('settings').set('com.ubnt.unifi.status', 'Connected');
-                Homey.manager('api').realtime('com.ubnt.unifi.status', 'Connected');
-                this._debug('Login success', this.unifi)
+                this.updateStatus('Connected');
+                this._debug('Login success');
             },
             err => {
                 if (attempt !== this.attempt) {
@@ -112,13 +149,13 @@ class unifi {
                 }
                 this._debug('Login failed?', err)
                 this.initialized = false;
+                this.reconnecting = false;
 
                 for (var id in this.devices) {
                     module.exports.setUnavailable( this.devices[id].data, "Offline" );
                 }
 
-                Homey.manager('settings').set('com.ubnt.unifi.status', 'Offline');
-                Homey.manager('api').realtime('com.ubnt.unifi.status', 'Offline');
+                this.updateStatus('Offline');
                 Homey.manager('api').realtime('com.ubnt.unifi.lastPoll', { lastPoll: Date.now() });
                 // {
                 //     [HTTPError: Response code 503 (Service Unavailable)]
@@ -130,12 +167,7 @@ class unifi {
                 //     statusCode: 503,
                 //     statusMessage: 'Service Unavailable'
                 // }
-                if (
-                    (typeof err.statusCode !== 'undefined' && err.statusCode === 503) ||
-                    (typeof err.code !== 'undefined' && err.code === 'ECONNREFUSED')
-                    ) {
-                    setTimeout(this.initializeApi, (60 * 1000));
-                }
+                this.reInitializeApi(err);
             } 
         );
     }
@@ -175,7 +207,7 @@ class unifi {
 
                 // Retry login again if we were initialized
                 if (this.initialized) {
-                    this.initializeApi();
+                    this.reInitializeApi(err);
                 }
             }
         );
@@ -422,7 +454,7 @@ class unifi {
 
                 // Retry login again if we were initialized
                 if (this.initialized) {
-                    this.initializeApi();
+                    this.reInitializeApi(err);
                 }
             }
         );
@@ -599,7 +631,7 @@ class unifi {
 
                 // Retry login again if we were initialized
                 if (this.initialized) {
-                    this.initializeApi();
+                    this.reInitializeApi(err);
                 }
             }
         );
@@ -616,11 +648,13 @@ class unifi {
 
         // Start a poller, to check the device status every 30 secs.
         this.pollIntervals.push(setInterval(() => {
+            if (!this.initialized) return this._debug('There is no connection yet, please check your settings!');
             this._debug(`Polling clients (every ${this.options.defaultPollInterval} secs)`);
             this.updateClientList();
         }, this.options.defaultPollInterval * 1000))
         // Start a poller, to check the device status every 12 hrs.
         this.pollIntervals.push(setInterval(() => {
+            if (!this.initialized) return this._debug('There is no connection yet, please check your settings!');
             this._debug('Polling offline clients and AP\'s (once every 12 hrs)');
             this.updateOfflineClients();
             this.updateAccessPointList()
@@ -858,7 +892,7 @@ class unifi {
 
                     // Retry login again if we were initialized
                     if (this.initialized) {
-                        this.initializeApi();
+                        this.reInitializeApi(err);
                     }
 
                     done(); 
@@ -935,6 +969,7 @@ class unifi {
         if (this.options.debug || true) {
             const args = Array.prototype.slice.call(arguments);
             args.unshift('[debug]');
+            Homey.manager('api').realtime('com.ubnt.unifi.debug', args.join(' '));
             console.log.apply(null, args);
         }
     }

@@ -22,6 +22,11 @@
 		"notice": {
 			"restart": "* Als je alleen de connectie wilt herstarten, klik dan de knop &quot;Toepassen&quot; nogmaals."
 		},
+		"debug": {
+			"title": "Debug meldingen",
+			"intro": "De laatste 100 meldingen worden hieronder weergegeven; nieuwste meldingen bovenaan:",
+			"wait_msg": "Meldingen komen vanzelf binnen..."
+		},
 		"alert": {
 			"changes-saved": "Instellingen toegepast, verbinding wordt opgezet."
 		}

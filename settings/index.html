@@ -1,12 +1,13 @@
 <!doctype html>
 <html>
     <head>
-
+        <script type="text/javascript" src="/manager/webserver/assets/js/jquery.js"></script>
     </head>
     <body>
 
         <h1 data-i18n="settings.title">Ubiquiti UniFi Settings</h1>
         <p data-i18n="settings.intro">On this page you will be able to see current connection status and adjust the settings of this app.</p>
+
         <p><span data-i18n="settings.status">Status</span>: <span id="unifi_status" style="font-weight: bold;">Unknown</span><br />
            <span data-i18n="settings.last_poll.title">Last Poll</span>: <span id="unifi_lastPoll" data-i18n="settings.last_poll.waiting_for_event">... waiting for event...</span> <small data-i18n="settings.last_poll.poll_interval">(should update every 15 seconds)</small></p>
 
@@ -39,27 +40,55 @@
 
         </fieldset>
 
+        <button class="right" id="saver" onclick="save()" data-i18n="settings.button.apply">Send</button>
         <p><small data-i18n="settings.notice.restart">* If you just want to restart the connection, then click &quot;Apply&quot; again</small></p>
 
-        <button class="right" id="saver" onclick="save()" data-i18n="settings.button.apply">Send</button>
+        <fieldset>
+            <legend><span data-i18n="settings.debug.title">Debug messages</span> <small><a href="#" onclick='$(".debug").toggle(); return false;'>toggle</a></small></legend>
+
+            <div id="debug_container" class='debug' style='display: none;'>
+                <p data-i18n="settings.debug.intro">Up to 100 messages are shown below, in reverse order (newest on top):</p>
+                <div id="messages"></div>
+                <p><small data-i18n="settings.debug.wait_msg">Please wait for the events to come in</small></p>
+            </div>
+        </fieldset>
 
         <script type="text/javascript">
         function onHomeyReady(){
             Homey.get('com.ubnt.unifi.settings', function(err,data) {
-                // console.log(data);
+                if (err || !data) {
+                    document.getElementById('error').innerHTML = 'Loading settings failed, please load page again, or check app\'s running status';
+                    return;
+                }
+
                 document.getElementById('unifi_host').value = data['host'];
                 document.getElementById('unifi_port').value = data['port'];
                 document.getElementById('unifi_user').value = data['user'];
                 document.getElementById('unifi_pass').value = data['pass'];
                 document.getElementById('unifi_site').value = data['site'];
             });
-            // let driver = Homey.manager( 'drivers' ).getDriver('wifi-client');
-            // console.log(driver);
+
             Homey.on( 'com.ubnt.unifi.lastPoll', function( data ){
                 console.log( data );
                 document.getElementById('unifi_lastPoll').innerHTML = new Date(data.lastPoll).toLocaleString();
             });
+
+            var appendDebugMessages = (err, data) => {
+                if (err) return appendDebugMessages(null, data);
+
+                $('#debug_container #messages').prepend('<pre>' + new Date().toLocaleString() + ' : ' + data.toString() + '</pre>');
+
+                $('#messages pre').each(function(index) {
+                    if (index >= 100) $(this).remove();
+                });
+            };
+
             var updateStatusField =  (err, data) => {
+                if (err) {
+                    console.log(err);
+                    appendDebugMessages(err);
+                    return err;
+                }
                 var color = 'darkred';
                 if (data === 'Connected') color = 'darkgreen';
                 if (data === 'Connecting...') color = 'orange';
@@ -79,6 +108,7 @@
 
             Homey.get('com.ubnt.unifi.status', updateStatusField);
             Homey.on('com.ubnt.unifi.status', ( data ) => { updateStatusField(null, data); });
+            Homey.on('com.ubnt.unifi.debug', ( data ) => { appendDebugMessages(null, data); });
 
             Homey.ready();
         }
