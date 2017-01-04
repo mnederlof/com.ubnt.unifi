@@ -7,7 +7,7 @@
         "en": "Adds support for presence detection based on (wifi) clients connected to the UniFi Controller",
         "nl": "Ondersteuning voor aanwezigheids detectie op basis van (wifi) devices verbonden met de UniFi Controller"
     },
-    "version": "0.0.1",
+    "version": "0.0.2",
     "compatibility": "1.x",
     "author": {
         "name": "Michel Nederlof",
