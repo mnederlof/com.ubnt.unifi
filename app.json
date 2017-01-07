@@ -157,8 +157,8 @@
                         "name": "accessPoint",
                         "type": "autocomplete",
                         "placeholder": {
-                            "en": "AP name",
-                            "nl": "AP naam"
+                            "en": "Accesspoint name",
+                            "nl": "Accesspoint naam"
                         }
                     }
                 ],
@@ -253,8 +253,8 @@
                         "name": "accessPoint",
                         "type": "autocomplete",
                         "placeholder": {
-                            "en": "AP name",
-                            "nl": "AP naam"
+                            "en": "Accesspoint name",
+                            "nl": "Accesspoint naam"
                         }
                     }
                 ]
@@ -270,8 +270,8 @@
                         "name": "accessPoint",
                         "type": "autocomplete",
                         "placeholder": {
-                            "en": "AP name",
-                            "nl": "AP naam"
+                            "en": "Accesspoint name",
+                            "nl": "Accesspoint naam"
                         }
                     }
                 ]
@@ -313,7 +313,7 @@
             {
                 "id": "wifi_client_connected_with_ap",
                 "title": {
-                    "en": "!{{C|Disc}}onnected with Accesspoint",
+                    "en": "!{{C|Disc}}onnected with accesspoint",
                     "nl": "!{{V|Niet v}}erbonden met accesspoint"
                 },
                 "args": [
@@ -322,6 +322,31 @@
                         "type": "device",
                         "filter": "driver_id=wifi-client"
                     },
+                    {
+                        "name": "accessPoint",
+                        "type": "autocomplete",
+                        "placeholder": {
+                            "en": "Accesspoint name",
+                            "nl": "Accesspoint naam"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "clients_connected",
+                "title": {
+                    "en": "!{{C|Disc}}onnected Clients",
+                    "nl": "!{{A|Geen a}}pparaten verbonden"
+                },
+                "args": []
+            },
+            {
+                "id": "ap_has_clients_connected",
+                "title": {
+                    "en": "AP has !{{|no}} clients",
+                    "nl": "AP heeft !{{|geen}} apparaten"
+                },
+                "args": [
                     {
                         "name": "accessPoint",
                         "type": "autocomplete",
