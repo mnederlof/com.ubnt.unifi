@@ -33,8 +33,12 @@ This version has been tested against version 5.3.x of the Ubiquiti UniFi Control
 ## Supported Languages:
 * English
 * Dutch
+* Spanish
 
 ## Change Log:
+**0.0.3**
+* Translation to Spanish.
+
 **0.0.2:**
 * Bugfix: When a connection failed initially, the app crashed. This is now fixed.
 * Feature: It is now possible to show up to 100 debug messages in the App Settings page.
