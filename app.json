@@ -27,7 +27,7 @@
             "title": {
                 "en": "Connection state",
                 "en": "Verbindingsstatus",
-				"es": "Estado de Verbindings"
+                "es": "Estado de Verbindings"
             },
             "getable": true,
             "setable": false
@@ -37,12 +37,12 @@
             "title": {
                 "en": "Signal strength",
                 "nl": "Signaalsterkte",
-				"es": "Intensidad de Señal"
+                "es": "Intensidad de Señal"
             },
             "units": {
                 "en": "%",
                 "nl": "%",
-				"es": "%"
+                "es": "%"
             },
             "getable": true,
             "setable": false,
@@ -55,12 +55,12 @@
             "title": {
                 "en": "RSSI",
                 "nl": "RSSI",
-				"es": "RSSI"
+                "es": "RSSI"
             },
             "units": {
                 "en": "dBm",
                 "nl": "dBm",
-				"es": "dBm"
+                "es": "dBm"
             },
             "getable": true,
             "setable": false,
@@ -76,7 +76,7 @@
                 "title": {
                     "en": "Connected",
                     "nl": "Verbonden",
-					"es": "Conectado"
+                    "es": "Conectado"
                 },
                 "args": [
                     {
@@ -92,7 +92,7 @@
                         "title": {
                             "en": "dBm",
                             "nl": "dBm",
-							"es": "dBm"
+                            "es": "dBm"
                         },
                         "example": -75
                     },
@@ -102,7 +102,7 @@
                         "title": {
                             "en": "%",
                             "nl": "%",
-							"es": "%"
+                            "es": "%"
                         },
                         "example": 75
                     }
@@ -113,7 +113,7 @@
                 "title": {
                     "en": "Disconnected",
                     "nl": "Verbinding verbroken",
-					"es": "Desconectado"
+                    "es": "Desconectado"
                 },
                 "args": [
                     {
@@ -128,7 +128,7 @@
                 "title": {
                     "en": "Roams between AP",
                     "nl": "Zwerft naar ander AP"
-					"es": "Roaming entre AP"
+                    "es": "Roaming entre AP"
                 },
                 "args": [
                     {
@@ -144,12 +144,12 @@
                         "title": {
                             "en": "AP",
                             "nl": "AP",
-							"es": "AP"
+                            "es": "AP"
                         },
                         "example": {
                             "en": "ap123",
                             "nl": "ap123",
-							"es": "ap123"
+                            "es": "ap123"
                         }
                     }
                 ]
@@ -159,7 +159,7 @@
                 "title": {
                     "en": "Roams to AP",
                     "nl": "Zwerft naar AP",
-					"es": "Ruta a AP"
+                    "es": "Ruta a AP"
                 },
                 "args": [
                     {
@@ -173,7 +173,7 @@
                         "placeholder": {
                             "en": "Accesspoint name",
                             "nl": "Accesspoint naam",
-							"es": "Nombre del punto de acceso"
+                            "es": "Nombre del punto de acceso"
                         }
                     }
                 ],
@@ -184,12 +184,12 @@
                         "title": {
                             "en": "AP",
                             "nl": "AP",
-							"es": "AP"
+                            "es": "AP"
                         },
                         "example": {
                             "en": "ap123",
                             "nl": "ap123",
-							"es": "ap123"
+                            "es": "ap123"
                         }
                     }
                 ]
@@ -199,7 +199,7 @@
                 "title": {
                     "en": "Device just connected",
                     "nl": "Apparaat verbonden met wifi",
-					"es": "Dispositivo conectado"
+                    "es": "Dispositivo conectado"
                 },
                 "tokens": [
                     {
@@ -208,12 +208,12 @@
                         "title": {
                             "en": "mac",
                             "nl": "mac",
-							"es": "MAC"
+                            "es": "MAC"
                         },
                         "example": {
                             "en": "00:00:00:00:00:00",
                             "nl": "00:00:00:00:00:00",
-							"es": "00:00:00:00:00:00"
+                            "es": "00:00:00:00:00:00"
                         }
                     },
                     {
@@ -222,12 +222,12 @@
                         "title": {
                             "en": "Who",
                             "nl": "Wie"
-							"es": "Quien"
+                            "es": "Quien"
                         },
                         "example": {
                             "en": "wifi01",
                             "nl": "wifi01",
-							"es": "wifi01"
+                            "es": "wifi01"
                         }
                     }
                 ]
@@ -237,7 +237,7 @@
                 "title": {
                     "en": "Wifi connection lost",
                     "nl": "Wifi connectie verloren",
-					"es": "Conexión perdida"
+                    "es": "Conexión perdida"
                 },
                 "tokens": [
                     {
@@ -249,7 +249,7 @@
                         "example": {
                             "en": "00:00:00:00:00:00",
                             "nl": "00:00:00:00:00:00",
-							"es": "00:00:00:00:00:00"
+                            "es": "00:00:00:00:00:00"
                         }
                     },
                     {
@@ -258,12 +258,12 @@
                         "title": {
                             "en": "Who",
                             "nl": "Wie",
-							"es": "Quien"
+                            "es": "Quien"
                         },
                         "example": {
                             "en": "wifi01",
                             "nl": "wifi01",
-							"es": "wifi01"
+                            "es": "wifi01"
                         }
                     }
                 ]
@@ -273,7 +273,7 @@
                 "title": {
                     "en": "First device connected",
                     "nl": "Eerste apparaat verbonden"
-					"es": "Primer dispositivo conectado"
+                    "es": "Primer dispositivo conectado"
                 },
                 "args": [
                     {
@@ -282,7 +282,7 @@
                         "placeholder": {
                             "en": "Accesspoint name",
                             "nl": "Accesspoint naam",
-							"es": "Nombre punto de acceso"
+                            "es": "Nombre punto de acceso"
                         }
                     }
                 ]
@@ -292,7 +292,7 @@
                 "title": {
                     "en": "Last device disconnected",
                     "nl": "Laatste verbinding verbroken",
-					"es": "Último dispositivo desconectado"
+                    "es": "Último dispositivo desconectado"
                 },
                 "args": [
                     {
@@ -301,7 +301,7 @@
                         "placeholder": {
                             "en": "Accesspoint name",
                             "nl": "Accesspoint naam",
-							"es": "Nombre de punto de acceso"
+                            "es": "Nombre de punto de acceso"
                         }
                     }
                 ]
@@ -313,7 +313,7 @@
                 "title": {
                     "en": "!{{Connected|Disconnected}}",
                     "nl": "!{{Verbonden|Verbinding verbroken}}",
-					"es": "!{{Connected|Disconnected}}"
+                    "es": "!{{Connected|Disconnected}}"
                 },
                 "args": [
                     {
@@ -359,7 +359,7 @@
                         "placeholder": {
                             "en": "Accesspoint name",
                             "nl": "Accesspoint naam",
-							"es": "Nombre de punto de acceso"
+                            "es": "Nombre de punto de acceso"
                         }
                     }
                 ]
@@ -369,7 +369,7 @@
                 "title": {
                     "en": "!{{C|Disc}}onnected Clients",
                     "nl": "!{{A|Geen a}}pparaten verbonden",
-					"es": "!{{C|Disc}}onnected Clients",
+                    "es": "!{{C|Disc}}onnected Clients",
                 },
                 "args": []
             },
@@ -378,7 +378,7 @@
                 "title": {
                     "en": "AP has !{{|no}} clients",
                     "nl": "AP heeft !{{|geen}} apparaten",
-					"es": "AP has !{{|no}} clients"
+                    "es": "AP has !{{|no}} clients"
                 },
                 "args": [
                     {
@@ -387,7 +387,7 @@
                         "placeholder": {
                             "en": "Accesspoint name",
                             "nl": "Accesspoint naam",
-							"es": "Nombre de punto de acceso"
+                            "es": "Nombre de punto de acceso"
                         }
                     }
                 ]
@@ -400,7 +400,7 @@
             "name": {
                 "en": "Wifi Client",
                 "nl": "Wifi Client",
-				"es": "Cliente Wifi"
+                "es": "Cliente Wifi"
             },
             "mobile": {
                 "components": [
@@ -423,11 +423,11 @@
                                 "label": {
                                     "true": {
                                         "en": "Connected",
-										"es": "Conectado"
+                                        "es": "Conectado"
                                     },
                                     "false": {
                                         "en": "Disconnected",
-										"es": "Desconectado"
+                                        "es": "Desconectado"
                                     }
                                 }
                             }
