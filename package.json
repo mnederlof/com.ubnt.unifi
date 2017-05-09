@@ -1,6 +1,6 @@
 {
   "name": "com.ubnt.unifi",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "presence detection based on (wifi) clients connected to the UniFi Controller",
   "main": "app.js",
   "dependencies": {

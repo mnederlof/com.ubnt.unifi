@@ -1,0 +1,34 @@
+{
+	"settings": {
+		"title": "Ubiquiti UniFi Configuración",
+		"intro": "En esta página podrás ver el estado actual de la conexión y ajustar la configuración de la aplicación.",
+		"status": "Estado de Conexión",
+		"last_poll": {
+			"title": "Último Evento",
+			"waiting_for_event": "... Esperando un evento de exitoso ...",
+			"poll_interval": "(Debe actualizarse cada 15 segundos)"
+		},
+		"fieldset": {
+			"title": "UniFi Controller Configuración",
+			"host": "Host",
+			"port": "Puerto",
+			"user": "Usuario",
+			"pass": "Contraseña",
+			"site": "Sitio"
+		},
+		"button": {
+			"apply": "Aplicar"
+		},
+		"notice": {
+			"restart": "* Si sólo desea reiniciar la conexión, haga clic en &quot;Aplicar&quot; de nuevo."
+		},
+		"debug": {
+			"title": "Mensajes de Depuración",
+			"intro": "Hasta 100 mensajes se muestran a continuación, en orden inverso (más reciente en la parte superior):",
+			"wait_msg": "Los mensajes entrarán automáticamente..."
+		},
+		"alert": {
+			"changes-saved": "Configuración guardada, se está iniciando la conexión."
+		}
+	}
+}

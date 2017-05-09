@@ -5,9 +5,10 @@
     },
     "description": {
         "en": "Adds support for presence detection based on (wifi) clients connected to the UniFi Controller",
-        "nl": "Ondersteuning voor aanwezigheids detectie op basis van (wifi) devices verbonden met de UniFi Controller"
+        "nl": "Ondersteuning voor aanwezigheids detectie op basis van (wifi) devices verbonden met de UniFi Controller",
+        "es": "Añade soporte para la detección de presencia basada en clientes (wifi) conectados al UniFi Controller"
     },
-    "version": "0.0.2",
+    "version": "0.0.3",
     "compatibility": "1.x",
     "author": {
         "name": "Michel Nederlof",
@@ -25,7 +26,8 @@
             "type": "boolean",
             "title": {
                 "en": "Connection state",
-                "en": "Verbindingsstatus"
+                "en": "Verbindingsstatus",
+                "es": "Estado de Verbindings"
             },
             "getable": true,
             "setable": false
@@ -34,11 +36,13 @@
             "type": "number",
             "title": {
                 "en": "Signal strength",
-                "nl": "Signaalsterkte"
+                "nl": "Signaalsterkte",
+                "es": "Intensidad de Señal"
             },
             "units": {
                 "en": "%",
-                "nl": "%"
+                "nl": "%",
+                "es": "%"
             },
             "getable": true,
             "setable": false,
@@ -50,11 +54,13 @@
             "type": "number",
             "title": {
                 "en": "RSSI",
-                "nl": "RSSI"
+                "nl": "RSSI",
+                "es": "RSSI"
             },
             "units": {
                 "en": "dBm",
-                "nl": "dBm"
+                "nl": "dBm",
+                "es": "dBm"
             },
             "getable": true,
             "setable": false,
@@ -69,7 +75,8 @@
                 "id": "wifi_client_connected",
                 "title": {
                     "en": "Connected",
-                    "nl": "Verbonden"
+                    "nl": "Verbonden",
+                    "es": "Conectado"
                 },
                 "args": [
                     {
@@ -84,7 +91,8 @@
                         "type": "number",
                         "title": {
                             "en": "dBm",
-                            "nl": "dBm"
+                            "nl": "dBm",
+                            "es": "dBm"
                         },
                         "example": -75
                     },
@@ -93,7 +101,8 @@
                         "type": "number",
                         "title": {
                             "en": "%",
-                            "nl": "%"
+                            "nl": "%",
+                            "es": "%"
                         },
                         "example": 75
                     }
@@ -103,7 +112,8 @@
                 "id": "wifi_client_disconnected",
                 "title": {
                     "en": "Disconnected",
-                    "nl": "Verbinding verbroken"
+                    "nl": "Verbinding verbroken",
+                    "es": "Desconectado"
                 },
                 "args": [
                     {
@@ -117,7 +127,8 @@
                 "id": "wifi_client_roamed",
                 "title": {
                     "en": "Roams between AP",
-                    "nl": "Zwerft naar ander AP"
+                    "nl": "Zwerft naar ander AP",
+                    "es": "Roaming entre AP"
                 },
                 "args": [
                     {
@@ -132,11 +143,13 @@
                         "type": "string",
                         "title": {
                             "en": "AP",
-                            "nl": "AP"
+                            "nl": "AP",
+                            "es": "AP"
                         },
                         "example": {
                             "en": "ap123",
-                            "nl": "ap123"
+                            "nl": "ap123",
+                            "es": "ap123"
                         }
                     }
                 ]
@@ -145,7 +158,8 @@
                 "id": "wifi_client_roamed_to_ap",
                 "title": {
                     "en": "Roams to AP",
-                    "nl": "Zwerft naar AP"
+                    "nl": "Zwerft naar AP",
+                    "es": "Ruta a AP"
                 },
                 "args": [
                     {
@@ -158,7 +172,8 @@
                         "type": "autocomplete",
                         "placeholder": {
                             "en": "Accesspoint name",
-                            "nl": "Accesspoint naam"
+                            "nl": "Accesspoint naam",
+                            "es": "Nombre del punto de acceso"
                         }
                     }
                 ],
@@ -168,11 +183,13 @@
                         "type": "string",
                         "title": {
                             "en": "AP",
-                            "nl": "AP"
+                            "nl": "AP",
+                            "es": "AP"
                         },
                         "example": {
                             "en": "ap123",
-                            "nl": "ap123"
+                            "nl": "ap123",
+                            "es": "ap123"
                         }
                     }
                 ]
@@ -181,7 +198,8 @@
                 "id": "a_client_connected",
                 "title": {
                     "en": "Device just connected",
-                    "nl": "Apparaat verbonden met wifi"
+                    "nl": "Apparaat verbonden met wifi",
+                    "es": "Dispositivo conectado"
                 },
                 "tokens": [
                     {
@@ -189,11 +207,13 @@
                         "type": "string",
                         "title": {
                             "en": "mac",
-                            "nl": "mac"
+                            "nl": "mac",
+                            "es": "MAC"
                         },
                         "example": {
                             "en": "00:00:00:00:00:00",
-                            "nl": "00:00:00:00:00:00"
+                            "nl": "00:00:00:00:00:00",
+                            "es": "00:00:00:00:00:00"
                         }
                     },
                     {
@@ -201,11 +221,13 @@
                         "type": "string",
                         "title": {
                             "en": "Who",
-                            "nl": "Wie"
+                            "nl": "Wie",
+                            "es": "Quien"
                         },
                         "example": {
                             "en": "wifi01",
-                            "nl": "wifi01"
+                            "nl": "wifi01",
+                            "es": "wifi01"
                         }
                     }
                 ]
@@ -214,7 +236,8 @@
                 "id": "a_client_disconnected",
                 "title": {
                     "en": "Wifi connection lost",
-                    "nl": "Wifi connectie verloren"
+                    "nl": "Wifi connectie verloren",
+                    "es": "Conexión perdida"
                 },
                 "tokens": [
                     {
@@ -225,7 +248,8 @@
                         },
                         "example": {
                             "en": "00:00:00:00:00:00",
-                            "nl": "00:00:00:00:00:00"
+                            "nl": "00:00:00:00:00:00",
+                            "es": "00:00:00:00:00:00"
                         }
                     },
                     {
@@ -233,11 +257,13 @@
                         "type": "string",
                         "title": {
                             "en": "Who",
-                            "nl": "Wie"
+                            "nl": "Wie",
+                            "es": "Quien"
                         },
                         "example": {
                             "en": "wifi01",
-                            "nl": "wifi01"
+                            "nl": "wifi01",
+                            "es": "wifi01"
                         }
                     }
                 ]
@@ -246,7 +272,8 @@
                 "id": "first_device_connected",
                 "title": {
                     "en": "First device connected",
-                    "nl": "Eerste apparaat verbonden"
+                    "nl": "Eerste apparaat verbonden",
+                    "es": "Primer dispositivo conectado"
                 },
                 "args": [
                     {
@@ -254,7 +281,8 @@
                         "type": "autocomplete",
                         "placeholder": {
                             "en": "Accesspoint name",
-                            "nl": "Accesspoint naam"
+                            "nl": "Accesspoint naam",
+                            "es": "Nombre punto de acceso"
                         }
                     }
                 ]
@@ -263,7 +291,8 @@
                 "id": "last_device_disconnected",
                 "title": {
                     "en": "Last device disconnected",
-                    "nl": "Laatste verbinding verbroken"
+                    "nl": "Laatste verbinding verbroken",
+                    "es": "Último dispositivo desconectado"
                 },
                 "args": [
                     {
@@ -271,7 +300,8 @@
                         "type": "autocomplete",
                         "placeholder": {
                             "en": "Accesspoint name",
-                            "nl": "Accesspoint naam"
+                            "nl": "Accesspoint naam",
+                            "es": "Nombre de punto de acceso"
                         }
                     }
                 ]
@@ -282,7 +312,8 @@
                 "id": "wifi_client_connected",
                 "title": {
                     "en": "!{{Connected|Disconnected}}",
-                    "nl": "!{{Verbonden|Verbinding verbroken}}"
+                    "nl": "!{{Verbonden|Verbinding verbroken}}",
+                    "es": "!{{Connected|Disconnected}}"
                 },
                 "args": [
                     {
@@ -327,7 +358,8 @@
                         "type": "autocomplete",
                         "placeholder": {
                             "en": "Accesspoint name",
-                            "nl": "Accesspoint naam"
+                            "nl": "Accesspoint naam",
+                            "es": "Nombre de punto de acceso"
                         }
                     }
                 ]
@@ -336,7 +368,8 @@
                 "id": "clients_connected",
                 "title": {
                     "en": "!{{C|Disc}}onnected Clients",
-                    "nl": "!{{A|Geen a}}pparaten verbonden"
+                    "nl": "!{{A|Geen a}}pparaten verbonden",
+                    "es": "!{{C|Disc}}onnected Clients",
                 },
                 "args": []
             },
@@ -344,7 +377,8 @@
                 "id": "ap_has_clients_connected",
                 "title": {
                     "en": "AP has !{{|no}} clients",
-                    "nl": "AP heeft !{{|geen}} apparaten"
+                    "nl": "AP heeft !{{|geen}} apparaten",
+                    "es": "AP has !{{|no}} clients"
                 },
                 "args": [
                     {
@@ -352,7 +386,8 @@
                         "type": "autocomplete",
                         "placeholder": {
                             "en": "Accesspoint name",
-                            "nl": "Accesspoint naam"
+                            "nl": "Accesspoint naam",
+                            "es": "Nombre de punto de acceso"
                         }
                     }
                 ]
@@ -364,7 +399,8 @@
             "id": "wifi-client",
             "name": {
                 "en": "Wifi Client",
-                "nl": "Wifi Client"
+                "nl": "Wifi Client",
+                "es": "Cliente Wifi"
             },
             "mobile": {
                 "components": [
@@ -386,10 +422,12 @@
                                 "invert": true,
                                 "label": {
                                     "true": {
-                                        "en": "Connected"
+                                        "en": "Connected",
+                                        "es": "Conectado"
                                     },
                                     "false": {
-                                        "en": "Disconnected"
+                                        "en": "Disconnected",
+                                        "es": "Desconectado"
                                     }
                                 }
                             }
