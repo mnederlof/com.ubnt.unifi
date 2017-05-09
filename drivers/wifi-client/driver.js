@@ -117,59 +117,66 @@ class unifi {
             'url': 'https://' + appSettings['host'],
             'site': appSettings['site'],
             'ignoreSsl': true,
-            'timeout': (10 * 1000),
+            'timeout': (30 * 1000),
         };
         const attempt = ++this.attempt;
 
         this._debug('Creating new controller connection');
         this.updateStatus('Connecting...');
+        try {
+            ubiquitiUnifi(options).then(
+                unifiController => {
+                    this._debug('Got login session')
+                    this.unifi = unifiController;
+                    this.initialized = true;
+                    this.reconnecting = false;
 
-        ubiquitiUnifi(options).then(
-            unifiController => {
-                this._debug('Got login session')
-                this.unifi = unifiController;
-                this.initialized = true;
-                this.reconnecting = false;
+                    for (var id in this.devices) {
+                        module.exports.setAvailable( this.devices[id].data, "Offline" );
+                    }
 
-                for (var id in this.devices) {
-                    module.exports.setAvailable( this.devices[id].data, "Offline" );
+                    this.updateAccessPointList();
+                    this.updateClientList();
+                    this.updateOfflineClients();
+
+                    this.updateStatus('Connected');
+                    this._debug('Login success');
+                },
+                err => {
+                    handleLoginError(attempt, err)
                 }
+            );
+        } catch(err) {
+            this.handleLoginError(attempt, err)
+        }
+    }
 
-                this.updateAccessPointList();
-                this.updateClientList();
-                this.updateOfflineClients();
+    handleLoginError(attempt, err) {
+        if (attempt !== this.attempt) {
+            this._debug('Ignore failed attempt', attempt, 'current attempt', this.attempt);
+            return;
+        }
+        this._debug('Login failed?', err)
+        this.initialized = false;
+        this.reconnecting = false;
 
-                this.updateStatus('Connected');
-                this._debug('Login success');
-            },
-            err => {
-                if (attempt !== this.attempt) {
-                    this._debug('Ignore failed attempt', attempt, 'current attempt', this.attempt);
-                    return;
-                }
-                this._debug('Login failed?', err)
-                this.initialized = false;
-                this.reconnecting = false;
+        for (var id in this.devices) {
+            module.exports.setUnavailable( this.devices[id].data, "Offline" );
+        }
 
-                for (var id in this.devices) {
-                    module.exports.setUnavailable( this.devices[id].data, "Offline" );
-                }
-
-                this.updateStatus('Offline');
-                Homey.manager('api').realtime('com.ubnt.unifi.lastPoll', { lastPoll: Date.now() });
-                // {
-                //     [HTTPError: Response code 503 (Service Unavailable)]
-                //     message: 'Response code 503 (Service Unavailable)',
-                //     host: '192.168.1.20:8443',
-                //     hostname: '192.168.1.20',
-                //     method: 'POST',
-                //     path: '/api/login',
-                //     statusCode: 503,
-                //     statusMessage: 'Service Unavailable'
-                // }
-                this.reInitializeApi(err);
-            } 
-        );
+        this.updateStatus('Offline');
+        Homey.manager('api').realtime('com.ubnt.unifi.lastPoll', { lastPoll: Date.now() });
+        // {
+        //     [HTTPError: Response code 503 (Service Unavailable)]
+        //     message: 'Response code 503 (Service Unavailable)',
+        //     host: '192.168.1.20:8443',
+        //     hostname: '192.168.1.20',
+        //     method: 'POST',
+        //     path: '/api/login',
+        //     statusCode: 503,
+        //     statusMessage: 'Service Unavailable'
+        // }
+        this.reInitializeApi(err);
     }
 
     unifiCall() {
