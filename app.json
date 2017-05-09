@@ -6,7 +6,7 @@
     "description": {
         "en": "Adds support for presence detection based on (wifi) clients connected to the UniFi Controller",
         "nl": "Ondersteuning voor aanwezigheids detectie op basis van (wifi) devices verbonden met de UniFi Controller",
-		"es": "Añade soporte para la detección de presencia basada en clientes (wifi) conectados al UniFi Controller"
+        "es": "Añade soporte para la detección de presencia basada en clientes (wifi) conectados al UniFi Controller"
     },
     "version": "0.0.3",
     "compatibility": "1.x",
@@ -127,7 +127,7 @@
                 "id": "wifi_client_roamed",
                 "title": {
                     "en": "Roams between AP",
-                    "nl": "Zwerft naar ander AP"
+                    "nl": "Zwerft naar ander AP",
                     "es": "Roaming entre AP"
                 },
                 "args": [
@@ -221,7 +221,7 @@
                         "type": "string",
                         "title": {
                             "en": "Who",
-                            "nl": "Wie"
+                            "nl": "Wie",
                             "es": "Quien"
                         },
                         "example": {
@@ -272,7 +272,7 @@
                 "id": "first_device_connected",
                 "title": {
                     "en": "First device connected",
-                    "nl": "Eerste apparaat verbonden"
+                    "nl": "Eerste apparaat verbonden",
                     "es": "Primer dispositivo conectado"
                 },
                 "args": [
