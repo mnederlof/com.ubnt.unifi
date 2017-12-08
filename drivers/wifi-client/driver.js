@@ -655,7 +655,10 @@ class unifi {
 
         // Start a poller, to check the device status every 30 secs.
         this.pollIntervals.push(setInterval(() => {
-            if (!this.initialized) return this._debug('There is no connection yet, please check your settings!');
+            if (!this.initialized) {
+              return this._debug('There is no connection yet, please check your settings!');
+              this.initializeApi();
+            }
             this._debug(`Polling clients (every ${this.options.defaultPollInterval} secs)`);
             this.updateClientList();
         }, this.options.defaultPollInterval * 1000))
