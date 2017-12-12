@@ -8,7 +8,6 @@ class unifi {
     constructor(driverId, options) {
         this.driver = findWhere(Homey.manifest.drivers, { id: driverId });
 
-
         // Override default options with provided options object
         this.options = Object.assign({
             debug: true,
@@ -27,6 +26,8 @@ class unifi {
         this.unifi = {};
 
         this.devices = {};
+        this.pairedDevices = [];
+        this.firstUpdateDone = null;
 
         this.init = this.init.bind(this);
         this.added = this.added.bind(this);
@@ -39,6 +40,7 @@ class unifi {
         this.accessPointList = {};
         this.onlineClientList = {};
         this.offlineClientList = {};
+        this.usergroupList = {};
 
         this.driver.capabilities.forEach(capabilityId => {
             // Create capability object
@@ -81,6 +83,8 @@ class unifi {
 
         // Reset initialized state to false
         this.initialized = false;
+
+        this.firstUpdateDone = null;
 
         // Update status to Offline.
         this.updateStatus('Offline');
@@ -132,7 +136,9 @@ class unifi {
                     this.reconnecting = false;
 
                     for (var id in this.devices) {
-                        module.exports.setAvailable( this.devices[id].data, "Offline" );
+                        if(this.pairedDevices.indexOf(id) !== -1) {
+                            module.exports.setAvailable(this.devices[id].data, "Offline");
+                        }
                     }
 
                     this.updateAccessPointList();
@@ -161,7 +167,9 @@ class unifi {
         this.reconnecting = false;
 
         for (var id in this.devices) {
-            module.exports.setUnavailable( this.devices[id].data, "Offline" );
+            if(this.pairedDevices.indexOf(id) !== -1) {
+                module.exports.setUnavailable(this.devices[id].data, "Offline");
+            }
         }
 
         this.updateStatus('Offline');
@@ -195,7 +203,7 @@ class unifi {
                 this._debug('Updating offline clients');
                 let devices = {}
                 clients.forEach(client => {
-                    if (client.is_wired || typeof this.clientList[ client.mac ] !== 'undefined' ) return;
+                    if (client.is_wired || this.pairedDevices.indexOf(client.mac) === -1 || typeof this.onlineClientList[ client.mac ] !== 'undefined' ) return;
                     this._debug(`Got offline client back ${client.name}/${client.hostname} with mac ${client.mac}`)
 
                     let name = client.name
@@ -465,6 +473,24 @@ class unifi {
                 }
             }
         );
+
+        this._debug('Fetching user group list.');
+        // For usergroup resolving, also get all user groups
+        Promise.resolve(this.unifiCall('get', 'list/usergroup'))
+            .then( groups => {
+                groups.forEach(group => {
+                    this._debug(`Got usergroup back ${group.name}/${group._id}`)
+                    this.usergroupList[group._id] = group.name;
+                });
+            }, err => {
+                this._debug("Error while updating user group list", err);
+
+                // Retry login again if we were initialized
+                if (this.initialized) {
+                    this.reInitializeApi(err);
+                }
+            }
+        );
     }
 
     updateClientList(callback) {
@@ -571,16 +597,30 @@ class unifi {
                         'ap_mac': client.ap_mac, 
                         'roam_count': client.roam_count, 
                         'radio_proto': client.radio_proto, 
-                        'idletime': client.idletime
+                        'idletime': client.idletime,
+                        'guest': client.is_guest,
+                        'essid': client.essid,
+                        'group': this.usergroupList[client.usergroup_id] || client.usergroup_id
                     };
                 });
 
                 // Set the clientlist to current device list
                 this.onlineClientList = devices;
 
-                // Run updates for all devices
+                // Add yet unregistered devices
+                for (var id in devices) {
+                    if(!(id in this.devices) && this.pairedDevices.indexOf(id) === -1) {
+                        this.initNode({id: id});
+                    }
+                }
+
+                // Run updates for paired on and offline devices
                 for (var id in this.devices) {
                     this.updateNode(id);
+                }
+
+                if(!this.firstUpdateDone) {
+                    this.firstUpdateDone = true;
                 }
 
                 if (this.accessPointList) {
@@ -664,7 +704,7 @@ class unifi {
             if (!this.initialized) return this._debug('There is no connection yet, please check your settings!');
             this._debug('Polling offline clients and AP\'s (once every 12 hrs)');
             this.updateOfflineClients();
-            this.updateAccessPointList()
+            this.updateAccessPointList();
         }, (12 * 3600 * 1000)))
 
         // Device condition to check if a device is connected
@@ -736,6 +776,24 @@ class unifi {
         if (typeof this.onlineClientList[deviceDataId] !== 'undefined') name = this.onlineClientList[deviceDataId].name;
         return name;
     }
+    getNodeGuest(deviceDataId) {
+        let guest = '';
+        if (typeof this.offlineClientList[deviceDataId] !== 'undefined') guest = this.offlineClientList[deviceDataId].guest;
+        if (typeof this.onlineClientList[deviceDataId] !== 'undefined') guest = this.onlineClientList[deviceDataId].guest;
+        return guest;
+    }
+    getNodeGroup(deviceDataId) {
+        let group = '';
+        if (typeof this.offlineClientList[deviceDataId] !== 'undefined') group = this.offlineClientList[deviceDataId].group;
+        if (typeof this.onlineClientList[deviceDataId] !== 'undefined') group = this.onlineClientList[deviceDataId].group;
+        return group;
+    }
+    getNodeEssid(deviceDataId) {
+        let essid = '';
+        if (typeof this.offlineClientList[deviceDataId] !== 'undefined') essid = this.offlineClientList[deviceDataId].essid;
+        if (typeof this.onlineClientList[deviceDataId] !== 'undefined') essid = this.onlineClientList[deviceDataId].essid;
+        return essid;
+    }
 
     updateNode(deviceDataId) {
         let state = this.getNodeState(deviceDataId);
@@ -743,50 +801,76 @@ class unifi {
         // Also update the name of the local device list.
         let nodeName = this.getNodeName(deviceDataId);
         if (nodeName) {
-            // this._debug('Update node name to ', nodeName);
             this.devices[ deviceDataId ].name = nodeName;
+            this._debug('Updating node ', { id: deviceDataId, name: nodeName });
+        }
+
+        let nodeGroup = this.getNodeGroup(deviceDataId);
+        if (nodeGroup) {
+            this.devices[ deviceDataId ].group = nodeGroup;
+        }
+
+        let nodeGuest = this.getNodeGuest(deviceDataId);
+        if (nodeGuest) {
+            this.devices[ deviceDataId ].guest = nodeGuest;
+        }
+
+        let nodeEssid = this.getNodeEssid(deviceDataId);
+        if (nodeEssid) {
+            this.devices[ deviceDataId ].essid = nodeEssid;
+        }
+
+        let forceUpdate = false;
+        if(this.pairedDevices.indexOf(deviceDataId) === -1 && this.firstUpdateDone) {
+            forceUpdate = true;
         }
 
         for (var capabilityId in state) {
             if (state[ capabilityId ] != this.devices[ deviceDataId ].state[ capabilityId ]) {
-                this._debug(`Updating capabilityId ${capabilityId} with value "${state[capabilityId]}"`, this.devices[ deviceDataId ].data);
-                if (capabilityId == 'connected_ap' && this.devices[ deviceDataId ].state[ capabilityId ] !== null) {
-                    let tokens = {
-                        'accessPoint': state[capabilityId],
-                    };
+                if(this.pairedDevices.indexOf(deviceDataId) !== -1) {
+                    this._debug(`Updating capabilityId ${capabilityId} with value "${state[capabilityId]}"`, this.devices[ deviceDataId ].data);
+                    if (capabilityId == 'connected_ap' && (forceUpdate || this.devices[deviceDataId].state[capabilityId] !== null)) {
+                        let tokens = {
+                            'accessPoint': state[capabilityId],
+                        };
 
-                    this._debug(`Running device trigger "wifi_client_roamed", tokens: `, tokens)
-                    Homey.manager('flow').triggerDevice(
-                        'wifi_client_roamed',
-                        tokens,
-                        state,
-                        this.devices[ deviceDataId ].data,
-                        function(err, result) {
-                            if( err ) return Homey.error(err);
-                        }
-                    );
+                        this._debug(`Running device trigger "wifi_client_roamed", tokens: `, tokens)
+                        Homey.manager('flow').triggerDevice(
+                            'wifi_client_roamed',
+                            tokens,
+                            state,
+                            this.devices[deviceDataId].data,
+                            function (err, result) {
+                                if (err) return Homey.error(err);
+                            }
+                        );
 
-                    tokens['accessPoint'] = this.devices[ deviceDataId ].state[ capabilityId ]; // change to previous AP
-                    this._debug(`Running device trigger "wifi_client_roamed_to_ap", tokens: `, tokens)
-                    Homey.manager('flow').triggerDevice(
-                        'wifi_client_roamed_to_ap',
-                        tokens,
-                        state,
-                        this.devices[ deviceDataId ].data,
-                        function(err, result) {
-                            if( err ) return Homey.error(err);
-                        }
-                    );
+                        tokens['accessPoint'] = this.devices[deviceDataId].state[capabilityId]; // change to previous AP
+                        this._debug(`Running device trigger "wifi_client_roamed_to_ap", tokens: `, tokens)
+                        Homey.manager('flow').triggerDevice(
+                            'wifi_client_roamed_to_ap',
+                            tokens,
+                            state,
+                            this.devices[deviceDataId].data,
+                            function (err, result) {
+                                if (err) return Homey.error(err);
+                            }
+                        );
+                    }
                 }
 
                 // Run triggers, if changed during runtime, initial state of null is being skipped.
-                if (capabilityId == 'alarm_connected' && this.devices[ deviceDataId ].state[ capabilityId ] !== null) {
+                if (capabilityId == 'alarm_connected' && (forceUpdate || this.devices[deviceDataId].state[capabilityId] !== null)) {
+                    this._debug('TRIGGERED Node connection change', { id: deviceDataId, name: nodeName });
+
                     let deviceTrigger = 'wifi_client_disconnected';
                     let appTrigger = 'a_client_disconnected';
                     let tokens = {};
                     let appTokens = {
                         'mac': deviceDataId,
-                        'name': this.devices[ deviceDataId ].name
+                        'name': this.devices[ deviceDataId ].name,
+                        'guest': this.devices[ deviceDataId ].guest,
+                        'group': this.devices[ deviceDataId ].group
                     };
 
                     if (state[ capabilityId ] === true) {
@@ -798,17 +882,19 @@ class unifi {
                         };
                     }
 
-                    // Trigger the device flow 'wifi_client_(dis)connected'
-                    this._debug(`Running device trigger "${deviceTrigger}", tokens: `, tokens)
-                    Homey.manager('flow').triggerDevice(
-                        deviceTrigger,
-                        tokens,
-                        state,
-                        this.devices[ deviceDataId ].data,
-                        function(err, result){
-                            if( err ) return Homey.error(err);
-                        }
-                    );
+                    if(this.pairedDevices.indexOf(deviceDataId) !== -1) {
+                        // Trigger the device flow 'wifi_client_(dis)connected'
+                        this._debug(`Running device trigger "${deviceTrigger}", tokens: `, tokens)
+                        Homey.manager('flow').triggerDevice(
+                            deviceTrigger,
+                            tokens,
+                            state,
+                            this.devices[deviceDataId].data,
+                            function (err, result) {
+                                if (err) return Homey.error(err);
+                            }
+                        );
+                    }
 
                     this._debug(`Running app trigger "${appTrigger}", tokens:`, appTokens)
                     // Trigger the app flow 'a_client_(dis)connected'
@@ -822,13 +908,16 @@ class unifi {
                     );
                 }
 
-                // Send the new value to Homey.
-                if (typeof this.capabilities[capabilityId] !== 'undefined') {
-                    this._debug('   - Sending to Homey');
-                    this.realtime(this.devices[ deviceDataId ].data, capabilityId, state[ capabilityId ]);
+                if(this.pairedDevices.indexOf(deviceDataId) !== -1) {
+                    // Send the new value to Homey.
+                    if (typeof this.capabilities[capabilityId] !== 'undefined') {
+                        this._debug('   - Sending to Homey');
+                        this.realtime(this.devices[deviceDataId].data, capabilityId, state[capabilityId]);
+                    }
                 }
+
                 this._debug('   - Updating in device state');
-                this.devices[ deviceDataId ].state[ capabilityId ] = state[ capabilityId ];
+                this.devices[deviceDataId].state[capabilityId] = state[capabilityId];
             }
         }
     }
@@ -844,7 +933,9 @@ class unifi {
         };
         this.devices[ deviceData.id ].data = deviceData;
         this.devices[ deviceData.id ].name = '<pending>';
-
+        this.devices[ deviceData.id ].group = '<pending>';
+        this.devices[ deviceData.id ].essid = '<pending>';
+        this.devices[ deviceData.id ].guest = false;
         callback();
     }
 
@@ -855,6 +946,7 @@ class unifi {
         socket.on('list_devices', function( data, callback ){
             // Homey.log('Initializing ubiquitiUnifi with options', options)
             let devices = []
+
             for (var id in this.onlineClientList) {
                 devices.push({
                     name: this.onlineClientList[id]['name'],
@@ -893,8 +985,7 @@ class unifi {
                             }
                         });
                     });
-                    done();
-                }, err => { 
+                }, err => {
                     this._debug("Error during getAllUser", err);
 
                     // Retry login again if we were initialized
@@ -902,10 +993,9 @@ class unifi {
                         this.reInitializeApi(err);
                     }
 
-                    done(); 
+                    done();
                 }
             );
-
         }.bind(this))
     }
 
@@ -946,6 +1036,7 @@ class unifi {
     getNode(deviceData) {
 
         if (!(deviceData && deviceData.id)) return new Error('invalid_device_data');
+        if(this.pairedDevices.indexOf(deviceData.id) === -1) this.pairedDevices.push(deviceData.id);
 
         return this.devices[deviceData.id] || new Error('invalid_node');
     }

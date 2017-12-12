@@ -26,7 +26,7 @@
             "type": "boolean",
             "title": {
                 "en": "Connection state",
-                "en": "Verbindingsstatus",
+                "nl": "Verbindingsstatus",
                 "es": "Estado de Verbindings"
             },
             "getable": true,
@@ -229,6 +229,26 @@
                             "nl": "wifi01",
                             "es": "wifi01"
                         }
+                    },
+                    {
+                        "name": "guest",
+                        "type": "boolean",
+                        "title": {
+                            "en": "Guest",
+                            "nl": "Gast",
+                            "es": "Invitado"
+                        },
+                        "example": false
+                    },
+                    {
+                        "name": "group",
+                        "type": "string",
+                        "title": {
+                            "en": "Group",
+                            "nl": "Groep",
+                            "es": "Grupo"
+                        },
+                        "example": "Guests"
                     }
                 ]
             },
@@ -265,6 +285,26 @@
                             "nl": "wifi01",
                             "es": "wifi01"
                         }
+                    },
+                    {
+                        "name": "guest",
+                        "type": "boolean",
+                        "title": {
+                            "en": "Guest",
+                            "nl": "Gast",
+                            "es": "Invitado"
+                        },
+                        "example": false
+                    },
+                    {
+                        "name": "group",
+                        "type": "string",
+                        "title": {
+                            "en": "Group",
+                            "nl": "Groep",
+                            "es": "Grupo"
+                        },
+                        "example": "Guests"
                     }
                 ]
             },
