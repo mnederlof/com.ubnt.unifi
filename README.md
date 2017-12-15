@@ -36,6 +36,10 @@ This version has been tested against version 5.3.x of the Ubiquiti UniFi Control
 * Spanish
 
 ## Change Log:
+**1.0.0**
+* Added thread that reconnects every 60 seconds if possible
+* Bump to v1.0
+
 **0.0.3**
 * Added Spanish Translations.
 
