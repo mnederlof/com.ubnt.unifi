@@ -21,7 +21,7 @@ class unifi {
         this._debug('Options: ', this.options);
 
         this.initialized = false;
-        this.reconnecting = false;
+        this.reconnecting = true;
         this.attempt = 0;
         this.settingKey = 'com.ubnt.unifi.settings';
         this.unifi = {};
@@ -64,6 +64,7 @@ class unifi {
             if (setting == this.settingKey) {
                 // Got new settings, update our connection.
                 this._debug('Got new settings');
+                this.poll_pending = false;
                 this.initializeApi();
             }
         }.bind(this));
@@ -633,8 +634,11 @@ class unifi {
 
                 // Update time of last successfull poll
                 Homey.manager('api').realtime('com.ubnt.unifi.lastPoll', { lastPoll: Date.now() });
+                if (callback) callback();
             }, err => {
                 this._debug('Got error while updating client list', err);
+
+                if (callback) callback();
 
                 // Retry login again if we were initialized
                 if (this.initialized) {
@@ -653,12 +657,32 @@ class unifi {
     init( devicesData, callback ) {
         this.initializeApi();
 
+        // Start a poller that just reconnects every 10 seconds in case of a disconnect...
+        this.pollIntervals.push(setInterval(() => {
+            this._debug('Running periodic check to reconnect.')
+            if (this.initialized || this.reconnecting) {
+                this._debug(' - Nope, already connected or reconnecting...')
+                return; // we don't reconnect if we're connected
+            }
+            this._debug(' - Reconnecting...')
+
+            // If we are not initialized, then just (re)try it...
+            this.reconnecting = true;
+            this.initializeApi();
+        }, 60 * 1000))
+
         // Start a poller, to check the device status every 30 secs.
         this.pollIntervals.push(setInterval(() => {
             if (!this.initialized) return this._debug('There is no connection yet, please check your settings!');
+            if (this.poll_pending) return this._debug('Waiting on another poll to finish');
+
             this._debug(`Polling clients (every ${this.options.defaultPollInterval} secs)`);
-            this.updateClientList();
+            this.poll_pending = true
+            this.updateClientList(function() {
+                this.poll_pending = false
+            }.bind(this));
         }, this.options.defaultPollInterval * 1000))
+
         // Start a poller, to check the device status every 12 hrs.
         this.pollIntervals.push(setInterval(() => {
             if (!this.initialized) return this._debug('There is no connection yet, please check your settings!');
