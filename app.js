@@ -44,6 +44,7 @@ function init() {
 		callback(null, devices);
 	}
 	Homey.manager('flow').on('trigger.first_device_connected.accessPoint.autocomplete', getAccessPointList);
+	Homey.manager('flow').on('trigger.last_device_disconnected.accessPoint.autocomplete', getAccessPointList);
 	Homey.manager('flow').on('trigger.wifi_client_roamed_to_ap.accessPoint.autocomplete', getAccessPointList);
 	Homey.manager('flow').on('condition.wifi_client_connected_with_ap.accessPoint.autocomplete', getAccessPointList);
 	Homey.manager('flow').on('condition.ap_has_clients_connected.accessPoint.autocomplete', getAccessPointList);
