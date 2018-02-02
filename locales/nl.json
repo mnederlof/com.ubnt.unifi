@@ -22,6 +22,10 @@
 		"notice": {
 			"restart": "* Als je alleen de connectie wilt herstarten, klik dan de knop &quot;Toepassen&quot; nogmaals."
 		},
+		"siteid": {
+			"pre_msg": "Als je het SiteID niet weet, probeer dan onderstaande lijst:",
+			"post_msg": "(als credentials het toestaan, is deze lijst actueel)"
+		},
 		"debug": {
 			"title": "Debug meldingen",
 			"intro": "De laatste 100 meldingen worden hieronder weergegeven; nieuwste meldingen bovenaan:",
@@ -33,9 +37,10 @@
 	},
 	"status": {
 		"connection": {
-			"Offline": "Verbinding verbroken",
-			"Connecting...": "Bezig met verbinden...",
-			"Connected": "Verbonden"
+			"Connected": "Verbonden",
+			"Connecting": "Bezig met verbinden...",
+			"Disconnected": "Verbinding verbroken",
+			"Initialized": "Bezig met starten"
 		}
 	}
 }

@@ -1,5 +1,6 @@
 {
     "id": "com.ubnt.unifi",
+    "sdk": 2,
     "name": {
         "en": "Ubiquiti UniFi"
     },
@@ -8,8 +9,8 @@
         "nl": "Ondersteuning voor aanwezigheids detectie op basis van (wifi) devices verbonden met de UniFi Controller",
         "es": "Añade soporte para la detección de presencia basada en clientes (wifi) conectados al UniFi Controller"
     },
-    "version": "1.0.1",
-    "compatibility": "1.x",
+    "version": "2.0.0",
+    "compatibility": ">=1.5.0",
     "author": {
         "name": "Michel Nederlof",
         "email": "michel@nederlof.info"
@@ -105,6 +106,16 @@
                             "es": "%"
                         },
                         "example": 75
+                    },
+                    {
+                        "name": "radio_proto",
+                        "type": "string",
+                        "title": {
+                            "en": "Proto",
+                            "nl": "Proto",
+                            "es": "Proto"
+                        },
+                        "example": "ac"
                     }
                 ]
             },
@@ -151,6 +162,26 @@
                             "nl": "ap123",
                             "es": "ap123"
                         }
+                    },
+                    {
+                        "name": "radio_proto",
+                        "type": "string",
+                        "title": {
+                            "en": "Proto",
+                            "nl": "Proto",
+                            "es": "Proto"
+                        },
+                        "example": "ac"
+                    },
+                    {
+                        "name": "roam_count",
+                        "type": "number",
+                        "title": {
+                            "en": "Roam count",
+                            "nl": "Roam count",
+                            "es": "Roam count"
+                        },
+                        "example": 3
                     }
                 ]
             },
@@ -191,6 +222,26 @@
                             "nl": "ap123",
                             "es": "ap123"
                         }
+                    },
+                    {
+                        "name": "radio_proto",
+                        "type": "string",
+                        "title": {
+                            "en": "Proto",
+                            "nl": "Proto",
+                            "es": "Proto"
+                        },
+                        "example": "ac"
+                    },
+                    {
+                        "name": "roam_count",
+                        "type": "number",
+                        "title": {
+                            "en": "Roam count",
+                            "nl": "Roam count",
+                            "es": "Roam count"
+                        },
+                        "example": 3
                     }
                 ]
             },
@@ -269,6 +320,30 @@
                 ]
             },
             {
+                "id": "first_device_online",
+                "title": {
+                    "en": "First device connected",
+                    "nl": "Eerste apparaat verbonden",
+                    "es": "Primer dispositivo conectado"
+                },
+                "tokens": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "title": {
+                            "en": "Who",
+                            "nl": "Wie",
+                            "es": "Quien"
+                        },
+                        "example": {
+                            "en": "wifi01",
+                            "nl": "wifi01",
+                            "es": "wifi01"
+                        }
+                    }
+                ]
+            },
+            {
                 "id": "first_device_connected",
                 "title": {
                     "en": "First device connected",
@@ -286,6 +361,14 @@
                         }
                     }
                 ]
+            },
+            {
+                "id": "last_device_offline",
+                "title": {
+                    "en": "Last device disconnected",
+                    "nl": "Laatste verbinding verbroken",
+                    "es": "Último dispositivo desconectado"
+                }
             },
             {
                 "id": "last_device_disconnected",
@@ -321,24 +404,6 @@
                         "type": "device",
                         "filter": "driver_id=wifi-client"
                     }
-                ],
-                "tokens": [
-                    {
-                        "name": "rssi",
-                        "type": "number",
-                        "title": {
-                            "en": "dBm"
-                        },
-                        "example": -75
-                    },
-                    {
-                        "name": "signal",
-                        "type": "number",
-                        "title": {
-                            "en": "%"
-                        },
-                        "example": 75
-                    }
                 ]
             },
             {
@@ -370,8 +435,7 @@
                     "en": "!{{C|Disc}}onnected Clients",
                     "nl": "!{{A|Geen a}}pparaten verbonden",
                     "es": "!{{C|Disc}}onnected Clients"
-                },
-                "args": []
+                }
             },
             {
                 "id": "ap_has_clients_connected",

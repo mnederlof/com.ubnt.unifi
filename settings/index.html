@@ -2,6 +2,7 @@
 <html>
     <head>
         <script type="text/javascript" src="/manager/webserver/assets/js/jquery.js"></script>
+        <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
     </head>
     <body>
 
@@ -34,14 +35,20 @@
                 <input id="unifi_pass" type="password" value="" />
             </div>
             <div class="field row">
-                <label for="unifi_site" data-i18n="settings.fieldset.site">Site</label>
+                <label for="unifi_site" data-i18n="settings.fieldset.site">SiteID</label>
                 <input id="unifi_site" type="text" value="" />
             </div>
 
         </fieldset>
 
-        <button class="right" id="saver" onclick="save()" data-i18n="settings.button.apply">Send</button>
+        <button class="right" id="saver" data-i18n="settings.button.apply">Send</button>
         <p><small data-i18n="settings.notice.restart">* If you just want to restart the connection, then click &quot;Apply&quot; again</small></p>
+        <p>
+            <small data-i18n="settings.siteid.pre_msg">This is a list of possible Site ID's:</small>
+            <small data-i18n="settings.siteid.post_msg">(if possible, this list is a discovered list)</small>
+            <br />
+            <small><span id="sites"></span></small>
+        </p>
 
         <fieldset>
             <legend><span data-i18n="settings.debug.title">Debug messages</span> <small><a href="#" onclick='$(".debug").toggle(); return false;'>toggle</a></small></legend>
@@ -54,7 +61,8 @@
         </fieldset>
 
         <script type="text/javascript">
-        function onHomeyReady(){
+        var _Homey = null
+        function onHomeyReady(Homey){
             Homey.get('com.ubnt.unifi.settings', function(err,data) {
                 if (err || !data) {
                     document.getElementById('error').innerHTML = 'Loading settings failed, please load page again, or check app\'s running status';
@@ -69,9 +77,11 @@
             });
 
             Homey.on( 'com.ubnt.unifi.lastPoll', function( data ){
-                console.log( data );
                 document.getElementById('unifi_lastPoll').innerHTML = new Date(data.lastPoll).toLocaleString();
             });
+
+            // Ready to show form now.
+            Homey.ready();
 
             var appendDebugMessages = (err, data) => {
                 if (err) return appendDebugMessages(null, data);
@@ -97,7 +107,7 @@
                 statusField.style.color = color;
 
                 var translationKey = 'status.connection.' + data;
-                var translation = __(translationKey);
+                var translation = Homey.__(translationKey);
 
                 if (translation === translationKey || translation === '' || typeof translation === 'undefined') {
                     statusField.innerHTML = data;
@@ -106,45 +116,71 @@
                 }
             }
 
+            var updateSites = () => {
+                Homey.api('GET', '/sites', null, function( err, sites ) {
+                    if( err ) appendDebugMessages(err);
+                    _sites = [];
+                    for (idx in sites) {
+                        _sites.push("- " + sites[idx].name + " (" + sites[idx].desc + ")");
+                    }
+                    $('#sites').html(_sites.join('<br />'));
+                });
+            }
+            updateSites();
+
             Homey.get('com.ubnt.unifi.status', updateStatusField);
             Homey.on('com.ubnt.unifi.status', ( data ) => { updateStatusField(null, data); });
             Homey.on('com.ubnt.unifi.debug', ( data ) => { appendDebugMessages(null, data); });
 
-            Homey.ready();
-        }
+            // Save function
+            document.getElementById('saver').addEventListener('click', function(e) {
 
-        function save() {
-            // Retrieve DOM elements
-            var button = document.getElementById('saver'),
-                unifi_host = document.getElementById('unifi_host'),
-                unifi_port = document.getElementById('unifi_port'),
-                unifi_user = document.getElementById('unifi_user'),
-                unifi_pass = document.getElementById('unifi_pass'),
-                unifi_site = document.getElementById('unifi_site'),
-                error = document.getElementById('error'),
-                success = document.getElementById('success');
-            // Define update status
+                var button = document.getElementById('saver'),
+                    unifi_host = document.getElementById('unifi_host'),
+                    unifi_port = document.getElementById('unifi_port'),
+                    unifi_user = document.getElementById('unifi_user'),
+                    unifi_pass = document.getElementById('unifi_pass'),
+                    unifi_site = document.getElementById('unifi_site'),
+                    error = document.getElementById('error'),
+                    success = document.getElementById('success');
+                // Define update status
 
-            // Show message in the save button
-            // Set both disabled onSave
-            button.disabled = true;
-            success.innerHTML = __("settings.alert.changes-saved");
-            error.innerHTML = "";
+                // Show message in the save button
+                // Set both disabled onSave
+                button.disabled = true;
+                success.innerHTML = __("settings.alert.changes-saved");
+                error.innerHTML = "";
 
-            // Change the settings in Homey.
-            Homey.set('com.ubnt.unifi.settings', {
-                'host': unifi_host.value,
-                'port': unifi_port.value,
-                'user': unifi_user.value,
-                'pass': unifi_pass.value,
-                'site': unifi_site.value
+                var settings = {
+                    'host': unifi_host.value,
+                    'port': unifi_port.value,
+                    'user': unifi_user.value,
+                    'pass': unifi_pass.value,
+                    'site': unifi_site.value
+                }
+
+                // Change the settings in Homey.
+                // Homey.set('com.ubnt.unifi.settings', {
+                //     'host': unifi_host.value,
+                //     'port': unifi_port.value,
+                //     'user': unifi_user.value,
+                //     'pass': unifi_pass.value,
+                //     'site': unifi_site.value
+                // }, function( err ){
+                //     if( err ) return Homey.alert( err );
+                // });
+                Homey.api('PUT', '/settings', settings, function( err, result ) {
+                    if( err ) return Homey.alert(err);
+                });
+
+                // Return to edit mode after 3.5 seconds
+                setTimeout(function() {
+                    button.disabled = false;
+                    success.innerHTML = "";
+                    updateSites();
+                },3500);
             });
 
-            // Return to edit mode after 3.5 seconds
-            setTimeout(function() {
-                button.disabled = false;
-                success.innerHTML = "";
-            },3500);
         }
         </script>
 

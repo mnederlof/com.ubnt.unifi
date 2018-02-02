@@ -22,6 +22,10 @@
 		"notice": {
 			"restart": "* If you just want to restart the connection, then click &quot;Apply&quot; again."
 		},
+		"siteid": {
+			"pre_msg": "This is a list of possible Site ID's:",
+			"post_msg": "(if possible, this list is a discovered list)"
+		},
 		"debug": {
 			"title": "Debug messages",
 			"intro": "Up to 100 messages are shown below, in reverse order (newest on top):",
