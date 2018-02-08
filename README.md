@@ -12,7 +12,9 @@ Device conditions:
 
 Generic triggers:
 * A client (dis-)connected
+* First device is connected
 * First device is connected to specific accesspoint
+* Last device has disconnected
 * Last device has disconnected from specific accesspoint
 
 Please note: only paired devices are being considered as device in all flow contexts. Non-paired devices are not being considered.
@@ -28,7 +30,7 @@ Please note: only paired devices are being considered as device in all flow cont
 
 For supported accesspoints, see [UniFi download page](https://www.ubnt.com/download/unifi/) for more information.
 
-This version has been tested against version 5.3.x of the Ubiquiti UniFi Controller software.
+This version has been tested against version 5.7.x of the Ubiquiti UniFi Controller software.
 
 ## Supported Languages:
 * English
@@ -36,6 +38,9 @@ This version has been tested against version 5.3.x of the Ubiquiti UniFi Control
 * Spanish
 
 ## Change Log:
+**2.0.0**
+* Rewrite of app for SDKv2. Now using another library for unifi connectivity, hopefully fixing reconnects.
+
 **1.0.1**
 * Bugfix: autosuggest was not working for flow card 'last_device_disconnected'
 
