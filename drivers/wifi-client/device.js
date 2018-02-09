@@ -18,27 +18,12 @@ class UnifiWifiClientDevice extends Homey.Device {
             'rssi': this.getCapabilityValue('measure_rssi'),
             'signal': this.getCapabilityValue('measure_signal'),
             'ap_mac': null,
+            'essid': '',
             'roam_count': 0,
             'radio_proto': '',
-            'idletime': null
+            'idletime': null,
+            'usergroup': ''
         };
-
-
-        /*
-        this.state =
-        { name: 'my-unifi-alias',
-          rssi: -73,
-          signal: 42,
-          ap_mac: 'de:ad:ca:fe:ba:be',
-          roam_count: 2,
-          radio_proto: 'na',
-          idletime: 0 }
-
-        triggers:
-            'wifi_client_roamed',
-            'wifi_client_roamed_to_ap',
-            'wifi_client_disconnected'
-        */
     }
 
     _updateProperty(key, value) {
@@ -47,20 +32,19 @@ class UnifiWifiClientDevice extends Homey.Device {
             this.log(`[${this.name}] Updating capability ${key} from ${oldValue} to ${value}`);
             this.setCapabilityValue(key, value);
 
+            let tokens = {
+                rssi: this.state['rssi'],
+                signal: this.state['signal'],
+                radio_proto: this.state['radio_proto'],
+                essid: this.state['essid']
+            };
             if (key == 'alarm_connected') {
                 let deviceTrigger = 'wifi_client_connected';
                 let conditionTrigger = 'a_client_connected';
-                let tokens = {};
                 if (value === false) {
                     deviceTrigger = 'wifi_client_disconnected';
                     conditionTrigger = 'a_client_disconnected';
-                } else {
-                    // Only on connect, we have signal state.
-                    tokens = {
-                        rssi: this.state['rssi'],
-                        signal: this.state['signal'],
-                        radio_proto: this.state['radio_proto']
-                    };
+                    tokens = {}
                 }
 
                 // Trigger wifi_client_(dis-)connected
@@ -69,9 +53,14 @@ class UnifiWifiClientDevice extends Homey.Device {
                 // Trigger a_client_(dis-)connected
                 tokens = {
                     mac: this.getData().id,
-                    name: this.getName()
+                    name: this.getName(),
+                    essid: this.state['essid']
                 }
                 this.getDriver().triggerFlow(conditionTrigger, tokens, this);
+            }
+            if (key == 'measure_signal') {
+                // Let flow trigger be handled, and add tokens.
+                this.getDriver().triggerFlow('wifi_client_signal_changed', tokens, this);
             }
         }
     }

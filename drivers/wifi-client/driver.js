@@ -10,7 +10,6 @@ const tough = require('tough-cookie')
 
 const CookieJar = tough.CookieJar
 
-
 const _settingsKey = 'com.ubnt.unifi.settings'
 const _statusKey = 'com.ubnt.unifi.status'
 
@@ -32,6 +31,7 @@ class UnifiDriver extends Homey.Driver {
 
         this.accessPointList = {};
         this.onlineClientList = {};
+        this.usergroupList = {};
         this.pollIntervals = [];
 
         this.setStatus(_states['initialized']);
@@ -51,6 +51,8 @@ class UnifiDriver extends Homey.Driver {
         // this.ready(this.initialize);
         this._initialize();
         this.initialized = true;
+
+        this.firstPollDone = false;
     }
 
     _initialize() {
@@ -77,6 +79,7 @@ class UnifiDriver extends Homey.Driver {
             if (!this.connected) return this._debug('There is no connection yet, please check your settings!');
             this._debug('Polling AP\'s (once every 12 hrs)');
             this.updateAccessPointList();
+            this.updateUsergroupList();
         }, (12 * 3600 * 1000)))
     }
 
@@ -127,6 +130,7 @@ class UnifiDriver extends Homey.Driver {
             this.setStatus(_states['connected']);
             this.updateAccessPointList();
             this.updateClientList();
+            this.updateUsergroupList();
 
             // this.log(this.unifi.jar);
         });
@@ -178,6 +182,8 @@ class UnifiDriver extends Homey.Driver {
         let triggers = [
             'a_client_connected',
             'a_client_disconnected',
+            'a_guest_connected',
+            'a_guest_disconnected',
             'first_device_connected',
             'last_device_disconnected',
             'first_device_online',
@@ -187,6 +193,7 @@ class UnifiDriver extends Homey.Driver {
 
         // Register device triggers
         triggers = [
+            'wifi_client_signal_changed',
             'wifi_client_roamed',
             'wifi_client_roamed_to_ap',
             'wifi_client_connected',
@@ -390,6 +397,47 @@ class UnifiDriver extends Homey.Driver {
         let state = {};
     }
 
+    checkGuestTriggers(newDeviceList) {
+        if (!this.firstPollDone) return;
+
+        let knownDeviceIds = new Set();
+        this.getDevices().forEach(device => {
+            knownDeviceIds.add(device.getData().id);
+        })
+        for (var deviceId in newDeviceList) {
+            if (knownDeviceIds.has(deviceId) || this.onlineClientList.hasOwnProperty(deviceId)) continue;
+
+            // A unknown (to Homey) client has connected
+            let tokens = {
+                mac: deviceId,
+                name: newDeviceList[deviceId].name,
+                essid: newDeviceList[deviceId].essid,
+                group: newDeviceList[deviceId].usergroup
+            }
+            this.triggerFlow('a_guest_connected', tokens);
+        }
+
+        // Figure out if guests disconnected
+        let oldOnlineClientIds = new Set(Object.keys(this.onlineClientList));
+        let newOnlineClientIds = new Set(Object.keys(newDeviceList));
+        let disconnected_guests = oldOnlineClientIds.difference(newOnlineClientIds);
+        this.log('Disconnected guests:', disconnected_guests);
+
+        if (!disconnected_guests) return;
+        disconnected_guests.forEach(deviceId => {
+            if (knownDeviceIds.has(deviceId)) return;
+
+            // A unknown (to Homey) client has disconnected
+            let tokens = {
+                mac: deviceId,
+                name: this.onlineClientList[deviceId].name,
+                essid: this.onlineClientList[deviceId].essid,
+                group: this.onlineClientList[deviceId].usergroup
+            }
+            this.triggerFlow('a_guest_disconnected', tokens);
+        })
+    }
+
     updateClientList () {
         this.log('updateClientList called');
         this.unifi.get('stat/sta').then(res => {
@@ -410,16 +458,22 @@ class UnifiDriver extends Homey.Driver {
                     'rssi': parseInt(rssi.toPrecision(2)),
                     'signal': parseInt(signal),
                     'ap_mac': client.ap_mac,
+                    'essid': client.essid,
                     'roam_count': client.roam_count,
                     'radio_proto': client.radio_proto,
-                    'idletime': client.idletime
+                    'idletime': client.idletime,
+                    'usergroup': this.getUsergroupName(client.usergroup_id)
                 };
             });
 
+            this.checkGuestTriggers(devices);
             this.onlineClientList = devices;
 
             this.sendDeviceUpdates();
             this.updateLastPoll();
+
+            // Update firstPollDone, as we successfully received devices
+            this.firstPollDone = true;
         })
         .catch(err => {
             this._debug('Error while fetching client list:');
@@ -442,18 +496,39 @@ class UnifiDriver extends Homey.Driver {
                 };
                 this._debug(`Discovered AP ${accessPoint.name} (${accessPoint.mac})`)
             })
+            this.updateLastPoll();
         })
         .catch(err => {
             this._debug('Error while fetching ap list');
             this._debug(err);
             this.disconnect();
         });
-        this.updateLastPoll();
+    }
+
+    updateUsergroupList() {
+        this._debug('Fetching user group list');
+        this.unifi.get('list/usergroup').then(res => {
+            res.data.forEach(group => {
+                this._debug(`Got usergroup back ${group.name}/${group._id}`)
+                this.usergroupList[group._id] = group.name;
+            });
+            this.updateLastPoll();
+        })
+        .catch(err => {
+            this._debug('Error while fetching usergroup list');
+            this._debug(err);
+            this.disconnect();
+        });
     }
 
     getAccessPointName(accessPointId) {
         if (typeof this.accessPointList[ accessPointId ] === 'undefined') return null;
         return this.accessPointList[ accessPointId ].name;
+    }
+
+    getUsergroupName(usergroup_id){
+        if (typeof this.usergroupList[ usergroup_id ] === 'undefined') return null;
+        return this.usergroupList[ usergroup_id ].name;
     }
 
     // this is the easiest method to overwrite, when only the template 'Drivers-Pairing-System-Views' is being used.
@@ -541,6 +616,14 @@ class UnifiDriver extends Homey.Driver {
         API.realtime('com.ubnt.unifi.debug', args.join(' '));
         this.log.apply(null, args);
     }
+}
+
+Set.prototype.difference = function(setB) {
+    var difference = new Set(this);
+    for (var elem of setB) {
+        difference.delete(elem);
+    }
+    return difference;
 }
 
 module.exports = UnifiDriver;
