@@ -16,11 +16,13 @@ Generic triggers:
 * First device is connected to specific accesspoint
 * Last device has disconnected
 * Last device has disconnected from specific accesspoint
+* A non-paired device (guest) has (dis-)connected
 
-Please note: only paired devices are being considered as device in all flow contexts. Non-paired devices are not being considered.
+Please note: only paired devices are being considered as device in all flow contexts. Non-paired devices are only usable for the guest (dis-)connected trigger.
 
 ## Geting started:
 * Configure settings for UniFi Controller via Homey Settings panel.
+  * If you have a custom site name, then first try default as site id. Then a list of site ids will be loaded.
 * Go to Devices > Add new device wizard
 * Select device you want to pair with Homey.
   * It will only show devices known to your controller for the last 24 hours.
@@ -30,7 +32,7 @@ Please note: only paired devices are being considered as device in all flow cont
 
 For supported accesspoints, see [UniFi download page](https://www.ubnt.com/download/unifi/) for more information.
 
-This version has been tested against version 5.7.x of the Ubiquiti UniFi Controller software.
+This version has been tested against version 5.7.x of the Ubiquiti UniFi Controller software. Lower versions might work too, but is untested.
 
 ## Supported Languages:
 * English
@@ -38,6 +40,11 @@ This version has been tested against version 5.7.x of the Ubiquiti UniFi Control
 * Spanish
 
 ## Change Log:
+**2.0.1**
+* Added triggers for non-paired devices (guests).
+  * Usergroup token is provided too (if known)
+* Added SSID to connected triggers
+
 **2.0.0**
 * Rewrite of app for SDKv2. Now using another library for unifi connectivity, hopefully fixing reconnects.
 
