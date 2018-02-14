@@ -40,6 +40,9 @@ This version has been tested against version 5.7.x of the Ubiquiti UniFi Control
 * Spanish
 
 ## Change Log:
+**2.0.2**
+* Bugfix release. Upon initial installation, it failed to start the app, due to uninitialized settings.
+
 **2.0.1**
 * Added triggers for non-paired devices (guests).
   * Usergroup token is provided too (if known)
