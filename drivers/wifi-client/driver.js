@@ -85,7 +85,7 @@ class UnifiDriver extends Homey.Driver {
 
     initializeConnection() {
         this.log('initializeConnection called');
-        if (this.connected) return;
+        if (this.connected || !this.driverSettings) return;
 
         this._debug('Connecting to unifi controller', this.driverSettings['host']);
         this.setStatus(_states['connecting'])
