@@ -15,19 +15,28 @@ class UnifiApp extends Homey.App {
         this.log('- Loaded settings', this.appSettings)
     }
 
-    initSettings(key) {
-        this.appSettings = Settings.get(_settingsKey);
-        if (typeof this.appSettings === 'undefined') {
-            this.log('Freshly initializing com.ubnt.unifi.settings with some defaults')
-            this.appSettings = {
-                'host': 'unifi',
-                'port': '8443',
-                'user': 'ubnt',
-                'pass': 'ubnt',
-                'site': 'default'
-            };
-            this.saveSettings();
+    initSettings() {
+        let settingsInitialized = false;
+        Settings.getKeys().forEach(key => {
+            if (key == _settingsKey) {
+                settingsInitialized = true;
+            }
+        });
+
+        if (settingsInitialized) {
+            this.log('Found settings key', _settingsKey)
+            this.appSettings = Settings.get(_settingsKey);
+            return;
         }
+
+        this.log('Freshly initializing com.ubnt.unifi.settings with some defaults')
+        this.updateSettings({
+            'host': 'unifi',
+            'port': '8443',
+            'user': 'ubnt',
+            'pass': 'ubnt',
+            'site': 'default'
+        });
     }
 
     updateSettings(settings) {

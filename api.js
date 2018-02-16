@@ -11,7 +11,10 @@ module.exports = [
             let driver = Homey.ManagerDrivers.getDriver('wifi-client');
 
             let _default_list = [{'name': 'default', 'desc': 'default'}];
-            if (!driver.unifi === null) return callback(null, _default_list);
+            if (!driver.unifi) {
+                Homey.app.initSettings();
+                return callback(null, _default_list);
+            }
 
             driver.unifi.get('/api/self/sites')
                 .then(res => {

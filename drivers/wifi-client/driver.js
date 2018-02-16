@@ -165,7 +165,9 @@ class UnifiDriver extends Homey.Driver {
         if (this.connected) {
             this.connected = false;
         }
-        this.unifi.close();
+        if (this.unifi) {
+            this.unifi.close();
+        }
         this.setStatus(_states['disconnected']);
     }
 
@@ -553,6 +555,11 @@ class UnifiDriver extends Homey.Driver {
 
             callback(null, devices);
         };
+
+        if (!this.unifi) {
+            done();
+            return;
+        }
 
         // For pairing, also get all known wifi devices
         this.unifi.get('stat/alluser?within=24')

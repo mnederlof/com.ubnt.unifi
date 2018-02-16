@@ -61,19 +61,26 @@
         </fieldset>
 
         <script type="text/javascript">
-        var _Homey = null
         function onHomeyReady(Homey){
-            Homey.get('com.ubnt.unifi.settings', function(err,data) {
+            var initializeSettings = function(err,data) {
                 if (err || !data) {
                     document.getElementById('error').innerHTML = 'Loading settings failed, please load page again, or check app\'s running status';
                     return;
                 }
 
+                document.getElementById('error').innerHTML = '';
                 document.getElementById('unifi_host').value = data['host'];
                 document.getElementById('unifi_port').value = data['port'];
                 document.getElementById('unifi_user').value = data['user'];
                 document.getElementById('unifi_pass').value = data['pass'];
                 document.getElementById('unifi_site').value = data['site'];
+            }
+
+            Homey.get('com.ubnt.unifi.settings', initializeSettings);
+            Homey.on('settings.set', ( key, data ) => {
+                if (key == 'com.ubnt.unifi.settings') {
+                    Homey.get('com.ubnt.unifi.settings', initializeSettings);
+                }
             });
 
             Homey.on( 'com.ubnt.unifi.lastPoll', function( data ){
