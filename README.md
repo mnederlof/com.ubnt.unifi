@@ -40,6 +40,9 @@ This version has been tested against version 5.7.x of the Ubiquiti UniFi Control
 * Spanish
 
 ## Change Log:
+**2.0.3**
+* Bugfix: Fix triggers 'first device online' and 'last device offline'
+
 **2.0.2**
 * Bugfix release. Upon initial installation, it failed to start the app, due to uninitialized settings.
 
