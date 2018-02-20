@@ -13,6 +13,7 @@ class UnifiWifiClientDevice extends Homey.Device {
 
         this.log('this.name:', this.name);
 
+        this._online = this.getCapabilityValue('alarm_connected');
         this.state = {
             'name': '<pending>',
             'rssi': this.getCapabilityValue('measure_rssi'),
@@ -67,6 +68,7 @@ class UnifiWifiClientDevice extends Homey.Device {
 
     updateOnlineState(state) {
         let oldState = this.state;
+        this._online = true;
 
         this.state = state;
         this._updateProperty('alarm_connected', true);
@@ -89,11 +91,16 @@ class UnifiWifiClientDevice extends Homey.Device {
     }
 
     setOffline() {
+        this._online = false;
         if (this.getCapabilityValue('alarm_connected') == false) return;
 
         this.log(`[${this.name}] Set device to offline`)
         this.state.ap_mac = null;
         this._updateProperty('alarm_connected', false);
+    }
+
+    isOnline() {
+        return this._online;
     }
 
     triggerEvent(event, data) {

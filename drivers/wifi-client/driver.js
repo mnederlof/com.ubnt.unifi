@@ -31,6 +31,7 @@ class UnifiDriver extends Homey.Driver {
 
         this.accessPointList = {};
         this.onlineClientList = {};
+        this.numClientsOnline = -1;
         this.usergroupList = {};
         this.pollIntervals = [];
 
@@ -154,6 +155,7 @@ class UnifiDriver extends Homey.Driver {
             that.getDevices().forEach(device => {
                 if (data.user == device.getData().id) {
                     device.triggerEvent(this.event, data);
+                    that.checkNumClientsConnectedTrigger();  // check if this is the first online device.
                     that.checkAccessPoints();  // update AP listing
                 }
             });
@@ -319,38 +321,44 @@ class UnifiDriver extends Homey.Driver {
     sendDeviceUpdates() {
         // Validate information in this.onlineClientList
         // and update our devices based on that.
-        let onlineDevices = 0;
-        let oldOnlineDevices = 0;
-        let deviceName = '';
         this.getDevices().forEach(device => {
             let deviceId = device.getData().id;
-            if (device.getCapabilityValue('alarm_connected')) {
-                oldOnlineDevices++;
-            }
 
             if (this.onlineClientList.hasOwnProperty(deviceId)) {
-                onlineDevices++;
-                deviceName = device.getName();
                 return device.updateOnlineState(this.onlineClientList[deviceId]);
             }
             device.setOffline();
         });
 
+        this.checkNumClientsConnectedTrigger();
+        this.checkAccessPoints();
+    }
+
+    checkNumClientsConnectedTrigger() {
+        let onlineDeviceCount = 0;
+        let deviceName = '';
+        this.getDevices().forEach(device => {
+            if (device.isOnline()) {
+                onlineDeviceCount++;
+                deviceName = device.getName();
+            }
+        });
+
+        this._debug('Checking for *_device_o(n|ff)line')
         // Check if we need to trigger online/offline state.
         let tokens = {};
         let trigger = '';
-        if (oldOnlineDevices == 0 && onlineDevices > 0) {
+        if (this.numClientsOnline == 0 && onlineDeviceCount > 0) {
             trigger = 'first_device_online'
             tokens.name = deviceName;
         }
-        if (oldOnlineDevices > 0 && onlineDevices == 0) {
+        if (this.numClientsOnline > 0 && onlineDeviceCount == 0) {
             trigger = 'last_device_offline'
         }
-        if (trigger) this.triggerFlow(trigger, {});
+        if (trigger) this.triggerFlow(trigger, tokens);
+        this._debug(`Clients connected: before:${this.numClientsOnline}, now:${onlineDeviceCount} - ${trigger}`);
 
-        this._debug(`Clients connected: before:${oldOnlineDevices}, now:${onlineDevices} - ${trigger}`);
-
-        this.checkAccessPoints();
+        this.numClientsOnline = onlineDeviceCount;
     }
 
     checkAccessPoints() {
@@ -395,8 +403,6 @@ class UnifiDriver extends Homey.Driver {
             // Set num clients for accesspoint
             this.accessPointList[ap_mac].num_clients = num_clients;
         }
-
-        let state = {};
     }
 
     checkGuestTriggers(newDeviceList) {
