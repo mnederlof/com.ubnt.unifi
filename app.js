@@ -12,7 +12,7 @@ class UnifiApp extends Homey.App {
         this.setStatus('Offline');
         this.initSettings();
 
-        this.log('- Loaded settings', this.appSettings)
+        this.log('- Loaded settings', this.appSettings);
     }
 
     initSettings() {
@@ -31,11 +31,11 @@ class UnifiApp extends Homey.App {
 
         this.log('Freshly initializing com.ubnt.unifi.settings with some defaults')
         this.updateSettings({
-            'host': 'unifi',
-            'port': '8443',
-            'user': 'ubnt',
-            'pass': 'ubnt',
-            'site': 'default'
+            'host': '',
+            'port': '',
+            'user': '',
+            'pass': '',
+            'site': ''
         });
     }
 

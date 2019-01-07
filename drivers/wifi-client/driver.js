@@ -12,6 +12,7 @@ const CookieJar = tough.CookieJar
 
 const _settingsKey = 'com.ubnt.unifi.settings'
 const _statusKey = 'com.ubnt.unifi.status'
+const GB_DIVISOR = 1073741824;
 
 const _states = {
     'initializing': 'Initializing driver',
@@ -67,6 +68,7 @@ class UnifiDriver extends Homey.Driver {
         // One poller for initializing the connection every 60 seconds (if needed)
         this.pollIntervals.push(setInterval(() => {
             this.initializeConnection();
+            this.getUsageData();
         }, 60 * 1000));
 
         // Start a poller, to check the device status every 15 secs.
@@ -83,6 +85,56 @@ class UnifiDriver extends Homey.Driver {
             this.updateUsergroupList();
         }, (12 * 3600 * 1000)))
     }
+
+    getUsageData(){
+        this._debug('Get usage data for devices');
+
+        this.unifi.get("stat/alluser").then((rawdata)=>{
+            this._debug("Retrieved statistics for connected devices");
+            let devices = rawdata.data;
+
+            let mappedData = new Map();
+
+            devices.forEach(entry =>{
+               mappedData.set(entry.mac, entry);
+            });
+
+            this.getDevices().forEach(device =>{
+                let deviceData = device.getData();
+                let tx = 0;
+                let rx = 0;
+
+
+                if(mappedData.has(deviceData.id)){
+                    let unifyData = mappedData.get(deviceData.id);
+                    if(unifyData.hasOwnProperty('tx_bytes')){
+                        tx = unifyData.tx_bytes / GB_DIVISOR;
+                    }
+                    if(unifyData.hasOwnProperty('rx_bytes')){
+                        rx = unifyData.rx_bytes / GB_DIVISOR;
+                    }
+                }
+
+                device.setCapabilityValue("measure_bytes_received",tx,(err,result)=>{
+                    if(err){
+                        this._debug('--- Unsuccesfull updating bytes received capability');
+                        this._debug(err);
+                    }
+                });
+
+                this._debug('Update measure bytes send');
+                this._debug(tx);
+
+                device.setCapabilityValue("measure_bytes_send",rx,(err,result)=>{
+                    if(err){
+                        this._debug('--- Unsuccesfull updating bytes send capability');
+                        this._debug(err);
+                    }
+                });
+            });
+        });
+    }
+
 
     initializeConnection() {
         this.log('initializeConnection called');
@@ -576,7 +628,7 @@ class UnifiDriver extends Homey.Driver {
 
                     let name = client.name
                     if (typeof name === 'undefined') name = client.hostname;
-
+                    if (typeof name === 'undefined') name = client.mac;
                     devices.push({
                         name: name,
                         data: {
