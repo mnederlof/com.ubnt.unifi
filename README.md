@@ -40,6 +40,9 @@ This version has been tested against version 5.7.x of the Ubiquiti UniFi Control
 * Spanish
 
 ## Change Log:
+**2.0.4**
+ * Added icons to custom capabilities (change in Homey 2.0)
+
 **2.0.3**
 * Bugfix: Fix triggers 'first device online' and 'last device offline'
 

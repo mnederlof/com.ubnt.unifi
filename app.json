@@ -9,7 +9,7 @@
         "nl": "Ondersteuning voor aanwezigheids detectie op basis van (wifi) devices verbonden met de UniFi Controller",
         "es": "Añade soporte para la detección de presencia basada en clientes (wifi) conectados al UniFi Controller"
     },
-    "version": "2.0.3",
+    "version": "2.0.4",
     "compatibility": ">=1.5.0",
     "author": {
         "name": "Michel Nederlof",
@@ -31,7 +31,8 @@
                 "es": "Estado de Verbindings"
             },
             "getable": true,
-            "setable": false
+            "setable": false,
+            "icon": "./assets/connected.svg"
         },
         "measure_signal": {
             "type": "number",
@@ -49,7 +50,8 @@
             "setable": false,
             "min": 0,
             "max": 100,
-            "step": 1
+            "step": 1,
+            "icon": "./assets/signal.svg"
         },
         "measure_rssi": {
             "type": "number",
@@ -67,7 +69,8 @@
             "setable": false,
             "min": -100,
             "max": 0,
-            "step": 1
+            "step": 1,
+            "icon": "./assets/rssi.svg"
         }
     },
     "flow": {
