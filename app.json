@@ -1,728 +1,738 @@
 {
-    "id": "com.ubnt.unifi",
-    "sdk": 2,
-    "name": {
-        "en": "Ubiquiti UniFi"
+  "id": "com.ubnt.unifi",
+  "sdk": 2,
+  "name": {
+    "en": "Ubiquiti UniFi"
+  },
+  "description": {
+    "en": "Adds support for presence detection based on (wifi) clients connected to the UniFi Controller",
+    "nl": "Ondersteuning voor aanwezigheids detectie op basis van (wifi) devices verbonden met de UniFi Controller",
+    "es": "Añade soporte para la detección de presencia basada en clientes (wifi) conectados al UniFi Controller"
+  },
+  "version": "2.0.4",
+  "compatibility": ">=1.5.0",
+  "author": {
+      "name": "Michel Nederlof",
+      "email": "michel@nederlof.info"
+  },
+  "category": [
+    "security"
+  ],
+  "images": {
+    "large": "/assets/images/large.png",
+    "small": "/assets/images/small.png"
+  },
+  "capabilities": {
+    "alarm_connected": {
+      "type": "boolean",
+      "title": {
+        "en": "Connection state",
+        "nl": "Verbindingsstatus",
+        "es": "Estado de Verbindings"
+      },
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/connected.svg"
     },
-    "description": {
-        "en": "Adds support for presence detection based on (wifi) clients connected to the UniFi Controller",
-        "nl": "Ondersteuning voor aanwezigheids detectie op basis van (wifi) devices verbonden met de UniFi Controller",
-        "es": "Añade soporte para la detección de presencia basada en clientes (wifi) conectados al UniFi Controller"
+    "measure_signal": {
+      "type": "number",
+      "title": {
+        "en": "Signal strength",
+        "nl": "Signaalsterkte",
+        "es": "Intensidad de Señal"
+      },
+      "units": {
+        "en": "%",
+        "nl": "%",
+        "es": "%"
+      },
+      "getable": true,
+      "setable": false,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "icon": "/assets/signal.svg"
     },
-    "version": "2.0.3",
-    "compatibility": ">=1.5.0",
-    "author": {
-        "name": "Michel Nederlof",
-        "email": "michel@nederlof.info"
-    },
-    "category": [
-        "security"
-    ],
-    "images": {
-        "large": "/assets/images/large.png",
-        "small": "/assets/images/small.png"
-    },
-    "capabilities": {
-        "alarm_connected": {
-            "type": "boolean",
-            "title": {
-                "en": "Connection state",
-                "nl": "Verbindingsstatus",
-                "es": "Estado de Verbindings"
-            },
-            "getable": true,
-            "setable": false
+    "measure_rssi": {
+      "type": "number",
+      "title": {
+        "en": "RSSI",
+        "nl": "RSSI",
+        "es": "RSSI"
+      },
+      "units": {
+        "en": "dBm",
+        "nl": "dBm",
+        "es": "dBm"
+      },
+      "getable": true,
+      "setable": false,
+      "min": -100,
+      "max": 0,
+      "step": 1,
+      "icon": "/assets/rssi.svg"
+    }
+  },
+  "flow": {
+    "triggers": [
+      {
+        "id": "wifi_client_connected",
+        "title": {
+          "en": "Connected",
+          "nl": "Verbonden",
+          "es": "Conectado"
         },
-        "measure_signal": {
-            "type": "number",
-            "title": {
-                "en": "Signal strength",
-                "nl": "Signaalsterkte",
-                "es": "Intensidad de Señal"
-            },
-            "units": {
-                "en": "%",
-                "nl": "%",
-                "es": "%"
-            },
-            "getable": true,
-            "setable": false,
-            "min": 0,
-            "max": 100,
-            "step": 1
-        },
-        "measure_rssi": {
-            "type": "number",
-            "title": {
-                "en": "RSSI",
-                "nl": "RSSI",
-                "es": "RSSI"
-            },
-            "units": {
-                "en": "dBm",
-                "nl": "dBm",
-                "es": "dBm"
-            },
-            "getable": true,
-            "setable": false,
-            "min": -100,
-            "max": 0,
-            "step": 1
-        }
-    },
-    "flow": {
-        "triggers": [
-            {
-                "id": "wifi_client_connected",
-                "title": {
-                    "en": "Connected",
-                    "nl": "Verbonden",
-                    "es": "Conectado"
-                },
-                "args": [
-                    {
-                        "name": "device",
-                        "type": "device",
-                        "filter": "driver_id=wifi-client"
-                    }
-                ],
-                "tokens": [
-                    {
-                        "name": "rssi",
-                        "type": "number",
-                        "title": {
-                            "en": "dBm",
-                            "nl": "dBm",
-                            "es": "dBm"
-                        },
-                        "example": -75
-                    },
-                    {
-                        "name": "signal",
-                        "type": "number",
-                        "title": {
-                            "en": "%",
-                            "nl": "%",
-                            "es": "%"
-                        },
-                        "example": 75
-                    },
-                    {
-                        "name": "radio_proto",
-                        "type": "string",
-                        "title": {
-                            "en": "Proto",
-                            "nl": "Proto",
-                            "es": "Proto"
-                        },
-                        "example": "ac"
-                    },
-                    {
-                        "name": "essid",
-                        "type": "string",
-                        "title": {
-                            "en": "SSID",
-                            "nl": "SSID",
-                            "es": "SSID"
-                        },
-                        "example": {
-                            "en": "MyWifiSSID"
-                        }
-                    }
-                ]
-            },
-            {
-                "id": "wifi_client_disconnected",
-                "title": {
-                    "en": "Disconnected",
-                    "nl": "Verbinding verbroken",
-                    "es": "Desconectado"
-                },
-                "args": [
-                    {
-                        "name": "device",
-                        "type": "device",
-                        "filter": "driver_id=wifi-client"
-                    }
-                ]
-            },
-            {
-                "id": "wifi_client_signal_changed",
-                "title": {
-                    "en": "Signal changed",
-                    "nl": "Signaal veranderd",
-                    "es": "Señal cambiada"
-                },
-                "args": [
-                    {
-                        "name": "device",
-                        "type": "device",
-                        "filter": "driver_id=wifi-client"
-                    }
-                ],
-                "tokens": [
-                    {
-                        "name": "rssi",
-                        "type": "number",
-                        "title": {
-                            "en": "dBm",
-                            "nl": "dBm",
-                            "es": "dBm"
-                        },
-                        "example": -75
-                    },
-                    {
-                        "name": "signal",
-                        "type": "number",
-                        "title": {
-                            "en": "%",
-                            "nl": "%",
-                            "es": "%"
-                        },
-                        "example": 75
-                    },
-                    {
-                        "name": "radio_proto",
-                        "type": "string",
-                        "title": {
-                            "en": "Proto",
-                            "nl": "Proto",
-                            "es": "Proto"
-                        },
-                        "example": "ac"
-                    }
-                ]
-            },
-            {
-                "id": "wifi_client_roamed",
-                "title": {
-                    "en": "Roams between AP",
-                    "nl": "Zwerft naar ander AP",
-                    "es": "Roaming entre AP"
-                },
-                "args": [
-                    {
-                        "name": "device",
-                        "type": "device",
-                        "filter": "driver_id=wifi-client"
-                    }
-                ],
-                "tokens": [
-                    {
-                        "name": "accessPoint",
-                        "type": "string",
-                        "title": {
-                            "en": "AP",
-                            "nl": "AP",
-                            "es": "AP"
-                        },
-                        "example": {
-                            "en": "ap123",
-                            "nl": "ap123",
-                            "es": "ap123"
-                        }
-                    },
-                    {
-                        "name": "radio_proto",
-                        "type": "string",
-                        "title": {
-                            "en": "Proto",
-                            "nl": "Proto",
-                            "es": "Proto"
-                        },
-                        "example": "ac"
-                    },
-                    {
-                        "name": "roam_count",
-                        "type": "number",
-                        "title": {
-                            "en": "Roam count",
-                            "nl": "Roam count",
-                            "es": "Roam count"
-                        },
-                        "example": 3
-                    }
-                ]
-            },
-            {
-                "id": "wifi_client_roamed_to_ap",
-                "title": {
-                    "en": "Roams to AP",
-                    "nl": "Zwerft naar AP",
-                    "es": "Ruta a AP"
-                },
-                "args": [
-                    {
-                        "name": "device",
-                        "type": "device",
-                        "filter": "driver_id=wifi-client"
-                    },
-                    {
-                        "name": "accessPoint",
-                        "type": "autocomplete",
-                        "placeholder": {
-                            "en": "Accesspoint name",
-                            "nl": "Accesspoint naam",
-                            "es": "Nombre del punto de acceso"
-                        }
-                    }
-                ],
-                "tokens": [
-                    {
-                        "name": "accessPoint",
-                        "type": "string",
-                        "title": {
-                            "en": "AP",
-                            "nl": "AP",
-                            "es": "AP"
-                        },
-                        "example": {
-                            "en": "ap123",
-                            "nl": "ap123",
-                            "es": "ap123"
-                        }
-                    },
-                    {
-                        "name": "radio_proto",
-                        "type": "string",
-                        "title": {
-                            "en": "Proto",
-                            "nl": "Proto",
-                            "es": "Proto"
-                        },
-                        "example": "ac"
-                    },
-                    {
-                        "name": "roam_count",
-                        "type": "number",
-                        "title": {
-                            "en": "Roam count",
-                            "nl": "Roam count",
-                            "es": "Roam count"
-                        },
-                        "example": 3
-                    }
-                ]
-            },
-            {
-                "id": "a_client_connected",
-                "title": {
-                    "en": "Device just connected",
-                    "nl": "Apparaat verbonden met wifi",
-                    "es": "Dispositivo conectado"
-                },
-                "tokens": [
-                    {
-                        "name": "mac",
-                        "type": "string",
-                        "title": {
-                            "en": "mac",
-                            "nl": "mac",
-                            "es": "MAC"
-                        },
-                        "example": {
-                            "en": "00:00:00:00:00:00",
-                            "nl": "00:00:00:00:00:00",
-                            "es": "00:00:00:00:00:00"
-                        }
-                    },
-                    {
-                        "name": "name",
-                        "type": "string",
-                        "title": {
-                            "en": "Who",
-                            "nl": "Wie",
-                            "es": "Quien"
-                        },
-                        "example": {
-                            "en": "wifi01",
-                            "nl": "wifi01",
-                            "es": "wifi01"
-                        }
-                    },
-                    {
-                        "name": "essid",
-                        "type": "string",
-                        "title": {
-                            "en": "SSID",
-                            "nl": "SSID",
-                            "es": "SSID"
-                        },
-                        "example": {
-                            "en": "MyWifiSSID"
-                        }
-                    }
-                ]
-            },
-            {
-                "id": "a_client_disconnected",
-                "title": {
-                    "en": "Wifi connection lost",
-                    "nl": "Wifi connectie verloren",
-                    "es": "Conexión perdida"
-                },
-                "tokens": [
-                    {
-                        "name": "mac",
-                        "type": "string",
-                        "title": {
-                            "en": "mac"
-                        },
-                        "example": {
-                            "en": "00:00:00:00:00:00",
-                            "nl": "00:00:00:00:00:00",
-                            "es": "00:00:00:00:00:00"
-                        }
-                    },
-                    {
-                        "name": "name",
-                        "type": "string",
-                        "title": {
-                            "en": "Who",
-                            "nl": "Wie",
-                            "es": "Quien"
-                        },
-                        "example": {
-                            "en": "wifi01",
-                            "nl": "wifi01",
-                            "es": "wifi01"
-                        }
-                    },
-                    {
-                        "name": "essid",
-                        "type": "string",
-                        "title": {
-                            "en": "SSID",
-                            "nl": "SSID",
-                            "es": "SSID"
-                        },
-                        "example": {
-                            "en": "MyWifiSSID"
-                        }
-                    }
-                ]
-            },
-            {
-                "id": "first_device_online",
-                "title": {
-                    "en": "First device connected",
-                    "nl": "Eerste apparaat verbonden",
-                    "es": "Primer dispositivo conectado"
-                },
-                "tokens": [
-                    {
-                        "name": "name",
-                        "type": "string",
-                        "title": {
-                            "en": "Who",
-                            "nl": "Wie",
-                            "es": "Quien"
-                        },
-                        "example": {
-                            "en": "wifi01",
-                            "nl": "wifi01",
-                            "es": "wifi01"
-                        }
-                    }
-                ]
-            },
-            {
-                "id": "first_device_connected",
-                "title": {
-                    "en": "First device connected",
-                    "nl": "Eerste apparaat verbonden",
-                    "es": "Primer dispositivo conectado"
-                },
-                "args": [
-                    {
-                        "name": "accessPoint",
-                        "type": "autocomplete",
-                        "placeholder": {
-                            "en": "Accesspoint name",
-                            "nl": "Accesspoint naam",
-                            "es": "Nombre punto de acceso"
-                        }
-                    }
-                ]
-            },
-            {
-                "id": "last_device_offline",
-                "title": {
-                    "en": "Last device disconnected",
-                    "nl": "Laatste verbinding verbroken",
-                    "es": "Último dispositivo desconectado"
-                }
-            },
-            {
-                "id": "last_device_disconnected",
-                "title": {
-                    "en": "Last device disconnected",
-                    "nl": "Laatste verbinding verbroken",
-                    "es": "Último dispositivo desconectado"
-                },
-                "args": [
-                    {
-                        "name": "accessPoint",
-                        "type": "autocomplete",
-                        "placeholder": {
-                            "en": "Accesspoint name",
-                            "nl": "Accesspoint naam",
-                            "es": "Nombre de punto de acceso"
-                        }
-                    }
-                ]
-            },
-            {
-                "id": "a_guest_connected",
-                "title": {
-                    "en": "Guest just connected",
-                    "nl": "Gast verbonden met wifi",
-                    "es": "Visita conectado"
-                },
-                "tokens": [
-                    {
-                        "name": "mac",
-                        "type": "string",
-                        "title": {
-                            "en": "mac",
-                            "nl": "mac",
-                            "es": "MAC"
-                        },
-                        "example": {
-                            "en": "00:00:00:00:00:00",
-                            "nl": "00:00:00:00:00:00",
-                            "es": "00:00:00:00:00:00"
-                        }
-                    },
-                    {
-                        "name": "name",
-                        "type": "string",
-                        "title": {
-                            "en": "Who",
-                            "nl": "Wie",
-                            "es": "Quien"
-                        },
-                        "example": {
-                            "en": "wifi01",
-                            "nl": "wifi01",
-                            "es": "wifi01"
-                        }
-                    },
-                    {
-                        "name": "essid",
-                        "type": "string",
-                        "title": {
-                            "en": "SSID",
-                            "nl": "SSID",
-                            "es": "SSID"
-                        },
-                        "example": {
-                            "en": "MyWifiSSID"
-                        }
-                    },
-                    {
-                        "name": "group",
-                        "type": "string",
-                        "title": {
-                            "en": "Group",
-                            "nl": "Groep",
-                            "es": "Grupo"
-                        },
-                        "example": {
-                            "en": "MyUserGroup"
-                        }
-                    }
-                ]
-            },
-            {
-                "id": "a_guest_disconnected",
-                "title": {
-                    "en": "Guest connection lost",
-                    "nl": "Gast connectie verloren",
-                    "es": "Conexión de visita perdida"
-                },
-                "tokens": [
-                    {
-                        "name": "mac",
-                        "type": "string",
-                        "title": {
-                            "en": "mac"
-                        },
-                        "example": {
-                            "en": "00:00:00:00:00:00",
-                            "nl": "00:00:00:00:00:00",
-                            "es": "00:00:00:00:00:00"
-                        }
-                    },
-                    {
-                        "name": "name",
-                        "type": "string",
-                        "title": {
-                            "en": "Who",
-                            "nl": "Wie",
-                            "es": "Quien"
-                        },
-                        "example": {
-                            "en": "wifi01",
-                            "nl": "wifi01",
-                            "es": "wifi01"
-                        }
-                    },
-                    {
-                        "name": "essid",
-                        "type": "string",
-                        "title": {
-                            "en": "SSID",
-                            "nl": "SSID",
-                            "es": "SSID"
-                        },
-                        "example": {
-                            "en": "MyWifiSSID"
-                        }
-                    },
-                    {
-                        "name": "group",
-                        "type": "string",
-                        "title": {
-                            "en": "Group",
-                            "nl": "UserGroup",
-                            "es": "Grupo"
-                        },
-                        "example": {
-                            "en": "MyUserGroup"
-                        }
-                    }
-                ]
-            }
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=wifi-client"
+          }
         ],
-        "conditions": [
-            {
-                "id": "wifi_client_connected",
-                "title": {
-                    "en": "!{{Connected|Disconnected}}",
-                    "nl": "!{{Verbonden|Verbinding verbroken}}",
-                    "es": "!{{Connected|Disconnected}}"
-                },
-                "args": [
-                    {
-                        "name": "device",
-                        "type": "device",
-                        "filter": "driver_id=wifi-client"
-                    }
-                ]
+        "tokens": [
+          {
+            "name": "rssi",
+            "type": "number",
+            "title": {
+              "en": "dBm",
+              "nl": "dBm",
+              "es": "dBm"
             },
-            {
-                "id": "wifi_client_connected_with_ap",
-                "title": {
-                    "en": "!{{C|Disc}}onnected with accesspoint",
-                    "nl": "!{{V|Niet v}}erbonden met accesspoint"
-                },
-                "args": [
-                    {
-                        "name": "device",
-                        "type": "device",
-                        "filter": "driver_id=wifi-client"
-                    },
-                    {
-                        "name": "accessPoint",
-                        "type": "autocomplete",
-                        "placeholder": {
-                            "en": "Accesspoint name",
-                            "nl": "Accesspoint naam",
-                            "es": "Nombre de punto de acceso"
-                        }
-                    }
-                ]
+            "example": -75
+          },
+          {
+            "name": "signal",
+            "type": "number",
+            "title": {
+              "en": "%",
+              "nl": "%",
+              "es": "%"
             },
-            {
-                "id": "clients_connected",
-                "title": {
-                    "en": "!{{C|Disc}}onnected Clients",
-                    "nl": "!{{A|Geen a}}pparaten verbonden",
-                    "es": "!{{C|Disc}}onnected Clients"
-                }
+            "example": 75
+          },
+          {
+            "name": "radio_proto",
+            "type": "string",
+            "title": {
+              "en": "Proto",
+              "nl": "Proto",
+              "es": "Proto"
             },
-            {
-                "id": "ap_has_clients_connected",
-                "title": {
-                    "en": "AP has !{{|no}} clients",
-                    "nl": "AP heeft !{{|geen}} apparaten",
-                    "es": "AP has !{{|no}} clients"
-                },
-                "args": [
-                    {
-                        "name": "accessPoint",
-                        "type": "autocomplete",
-                        "placeholder": {
-                            "en": "Accesspoint name",
-                            "nl": "Accesspoint naam",
-                            "es": "Nombre de punto de acceso"
-                        }
-                    }
-                ]
+            "example": "ac"
+          },
+          {
+            "name": "essid",
+            "type": "string",
+            "title": {
+              "en": "SSID",
+              "nl": "SSID",
+              "es": "SSID"
+            },
+            "example": {
+              "en": "MyWifiSSID"
             }
+          }
         ]
-    },
-    "drivers": [
-        {
-            "id": "wifi-client",
-            "name": {
-                "en": "Wifi Client",
-                "nl": "Wifi Client",
-                "es": "Cliente Wifi"
+      },
+      {
+        "id": "wifi_client_disconnected",
+        "title": {
+          "en": "Disconnected",
+          "nl": "Verbinding verbroken",
+          "es": "Desconectado"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=wifi-client"
+          }
+        ]
+      },
+      {
+        "id": "wifi_client_signal_changed",
+        "title": {
+          "en": "Signal changed",
+          "nl": "Signaal veranderd",
+          "es": "Señal cambiada"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=wifi-client"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "rssi",
+            "type": "number",
+            "title": {
+              "en": "dBm",
+              "nl": "dBm",
+              "es": "dBm"
             },
-            "mobile": {
-                "components": [
-                    {
-                        "id": "icon"
-                    },
-                    {
-                        "id": "sensor",
-                        "capabilities": [ "alarm_connected",  "measure_signal", "measure_rssi" ],
-                        "options": {
-                            "icons": {
-                                "alarm_connected": "assets/connected.svg",
-                                "measure_signal": "assets/signal.svg",
-                                "measure_rssi": "assets/rssi.svg"
-                            },
-
-                            "alarm_connected": {
-                                "noblink": false,
-                                "invert": true,
-                                "label": {
-                                    "true": {
-                                        "en": "Connected",
-                                        "es": "Conectado"
-                                    },
-                                    "false": {
-                                        "en": "Disconnected",
-                                        "es": "Desconectado"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                ]
+            "example": -75
+          },
+          {
+            "name": "signal",
+            "type": "number",
+            "title": {
+              "en": "%",
+              "nl": "%",
+              "es": "%"
             },
-            "images": {
-                "large": "drivers/wifi-client/assets/images/large.jpg",
-                "small": "drivers/wifi-client/assets/images/small.jpg"
+            "example": 75
+          },
+          {
+            "name": "radio_proto",
+            "type": "string",
+            "title": {
+              "en": "Proto",
+              "nl": "Proto",
+              "es": "Proto"
             },
-            "class": "sensor",
-            "capabilities": [ "alarm_connected", "measure_rssi",  "measure_signal" ],
-            "pair": [
-                {
-                    "id": "list_clients",
-                    "template": "list_devices",
-                    "navigation": {
-                        "next": "add_clients"
-                    }
-                },
-                {
-                    "id": "add_clients",
-                    "template": "add_devices"
-                }
-            ]
+            "example": "ac"
+          }
+        ]
+      },
+      {
+        "id": "wifi_client_roamed",
+        "title": {
+          "en": "Roams between AP",
+          "nl": "Zwerft naar ander AP",
+          "es": "Roaming entre AP"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=wifi-client"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "accessPoint",
+            "type": "string",
+            "title": {
+              "en": "AP",
+              "nl": "AP",
+              "es": "AP"
+            },
+            "example": {
+              "en": "ap123",
+              "nl": "ap123",
+              "es": "ap123"
+            }
+          },
+          {
+            "name": "radio_proto",
+            "type": "string",
+            "title": {
+              "en": "Proto",
+              "nl": "Proto",
+              "es": "Proto"
+            },
+            "example": "ac"
+          },
+          {
+            "name": "roam_count",
+            "type": "number",
+            "title": {
+              "en": "Roam count",
+              "nl": "Roam count",
+              "es": "Roam count"
+            },
+            "example": 3
+          }
+        ]
+      },
+      {
+        "id": "wifi_client_roamed_to_ap",
+        "title": {
+          "en": "Roams to AP",
+          "nl": "Zwerft naar AP",
+          "es": "Ruta a AP"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=wifi-client"
+          },
+          {
+            "name": "accessPoint",
+            "type": "autocomplete",
+            "placeholder": {
+              "en": "Accesspoint name",
+              "nl": "Accesspoint naam",
+              "es": "Nombre del punto de acceso"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "accessPoint",
+            "type": "string",
+            "title": {
+              "en": "AP",
+              "nl": "AP",
+              "es": "AP"
+            },
+            "example": {
+              "en": "ap123",
+              "nl": "ap123",
+              "es": "ap123"
+            }
+          },
+          {
+            "name": "radio_proto",
+            "type": "string",
+            "title": {
+              "en": "Proto",
+              "nl": "Proto",
+              "es": "Proto"
+            },
+            "example": "ac"
+          },
+          {
+            "name": "roam_count",
+            "type": "number",
+            "title": {
+              "en": "Roam count",
+              "nl": "Roam count",
+              "es": "Roam count"
+            },
+            "example": 3
+          }
+        ]
+      },
+      {
+        "id": "a_client_connected",
+        "title": {
+          "en": "Device just connected",
+          "nl": "Apparaat verbonden met wifi",
+          "es": "Dispositivo conectado"
+        },
+        "tokens": [
+          {
+            "name": "mac",
+            "type": "string",
+            "title": {
+              "en": "mac",
+              "nl": "mac",
+              "es": "MAC"
+            },
+            "example": {
+              "en": "00:00:00:00:00:00",
+              "nl": "00:00:00:00:00:00",
+              "es": "00:00:00:00:00:00"
+            }
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "title": {
+              "en": "Who",
+              "nl": "Wie",
+              "es": "Quien"
+            },
+            "example": {
+              "en": "wifi01",
+              "nl": "wifi01",
+              "es": "wifi01"
+            }
+          },
+          {
+            "name": "essid",
+            "type": "string",
+            "title": {
+              "en": "SSID",
+              "nl": "SSID",
+              "es": "SSID"
+            },
+            "example": {
+              "en": "MyWifiSSID"
+            }
+          }
+        ]
+      },
+      {
+        "id": "a_client_disconnected",
+        "title": {
+          "en": "Wifi connection lost",
+          "nl": "Wifi connectie verloren",
+          "es": "Conexión perdida"
+        },
+        "tokens": [
+          {
+            "name": "mac",
+            "type": "string",
+            "title": {
+              "en": "mac"
+            },
+            "example": {
+              "en": "00:00:00:00:00:00",
+              "nl": "00:00:00:00:00:00",
+              "es": "00:00:00:00:00:00"
+            }
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "title": {
+              "en": "Who",
+              "nl": "Wie",
+              "es": "Quien"
+            },
+            "example": {
+              "en": "wifi01",
+              "nl": "wifi01",
+              "es": "wifi01"
+            }
+          },
+          {
+            "name": "essid",
+            "type": "string",
+            "title": {
+              "en": "SSID",
+              "nl": "SSID",
+              "es": "SSID"
+            },
+            "example": {
+              "en": "MyWifiSSID"
+            }
+          }
+        ]
+      },
+      {
+        "id": "first_device_online",
+        "title": {
+          "en": "First device connected",
+          "nl": "Eerste apparaat verbonden",
+          "es": "Primer dispositivo conectado"
+        },
+        "tokens": [
+          {
+            "name": "name",
+            "type": "string",
+            "title": {
+              "en": "Who",
+              "nl": "Wie",
+              "es": "Quien"
+            },
+            "example": {
+              "en": "wifi01",
+              "nl": "wifi01",
+              "es": "wifi01"
+            }
+          }
+        ]
+      },
+      {
+        "id": "first_device_connected",
+        "title": {
+          "en": "First device connected",
+          "nl": "Eerste apparaat verbonden",
+          "es": "Primer dispositivo conectado"
+        },
+        "args": [
+          {
+            "name": "accessPoint",
+            "type": "autocomplete",
+            "placeholder": {
+              "en": "Accesspoint name",
+              "nl": "Accesspoint naam",
+              "es": "Nombre punto de acceso"
+            }
+          }
+        ]
+      },
+      {
+        "id": "last_device_offline",
+        "title": {
+          "en": "Last device disconnected",
+          "nl": "Laatste verbinding verbroken",
+          "es": "Último dispositivo desconectado"
         }
+      },
+      {
+        "id": "last_device_disconnected",
+        "title": {
+          "en": "Last device disconnected",
+          "nl": "Laatste verbinding verbroken",
+          "es": "Último dispositivo desconectado"
+        },
+        "args": [
+          {
+            "name": "accessPoint",
+            "type": "autocomplete",
+            "placeholder": {
+              "en": "Accesspoint name",
+              "nl": "Accesspoint naam",
+              "es": "Nombre de punto de acceso"
+            }
+          }
+        ]
+      },
+      {
+        "id": "a_guest_connected",
+        "title": {
+          "en": "Guest just connected",
+          "nl": "Gast verbonden met wifi",
+          "es": "Visita conectado"
+        },
+        "tokens": [
+          {
+            "name": "mac",
+            "type": "string",
+            "title": {
+              "en": "mac",
+              "nl": "mac",
+              "es": "MAC"
+            },
+            "example": {
+              "en": "00:00:00:00:00:00",
+              "nl": "00:00:00:00:00:00",
+              "es": "00:00:00:00:00:00"
+            }
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "title": {
+              "en": "Who",
+              "nl": "Wie",
+              "es": "Quien"
+            },
+            "example": {
+              "en": "wifi01",
+              "nl": "wifi01",
+              "es": "wifi01"
+            }
+          },
+          {
+            "name": "essid",
+            "type": "string",
+            "title": {
+              "en": "SSID",
+              "nl": "SSID",
+              "es": "SSID"
+            },
+            "example": {
+              "en": "MyWifiSSID"
+            }
+          },
+          {
+            "name": "group",
+            "type": "string",
+            "title": {
+              "en": "Group",
+              "nl": "Groep",
+              "es": "Grupo"
+            },
+            "example": {
+              "en": "MyUserGroup"
+            }
+          }
+        ]
+      },
+      {
+        "id": "a_guest_disconnected",
+        "title": {
+          "en": "Guest connection lost",
+          "nl": "Gast connectie verloren",
+          "es": "Conexión de visita perdida"
+        },
+        "tokens": [
+          {
+            "name": "mac",
+            "type": "string",
+            "title": {
+              "en": "mac"
+            },
+            "example": {
+              "en": "00:00:00:00:00:00",
+              "nl": "00:00:00:00:00:00",
+              "es": "00:00:00:00:00:00"
+            }
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "title": {
+              "en": "Who",
+              "nl": "Wie",
+              "es": "Quien"
+            },
+            "example": {
+              "en": "wifi01",
+              "nl": "wifi01",
+              "es": "wifi01"
+            }
+          },
+          {
+            "name": "essid",
+            "type": "string",
+            "title": {
+              "en": "SSID",
+              "nl": "SSID",
+              "es": "SSID"
+            },
+            "example": {
+              "en": "MyWifiSSID"
+            }
+          },
+          {
+            "name": "group",
+            "type": "string",
+            "title": {
+              "en": "Group",
+              "nl": "UserGroup",
+              "es": "Grupo"
+            },
+            "example": {
+              "en": "MyUserGroup"
+            }
+          }
+        ]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "wifi_client_connected",
+        "title": {
+          "en": "!{{Connected|Disconnected}}",
+          "nl": "!{{Verbonden|Verbinding verbroken}}",
+          "es": "!{{Connected|Disconnected}}"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=wifi-client"
+          }
+        ]
+      },
+      {
+        "id": "wifi_client_connected_with_ap",
+        "title": {
+          "en": "!{{C|Disc}}onnected with accesspoint",
+          "nl": "!{{V|Niet v}}erbonden met accesspoint"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=wifi-client"
+          },
+          {
+            "name": "accessPoint",
+            "type": "autocomplete",
+            "placeholder": {
+              "en": "Accesspoint name",
+              "nl": "Accesspoint naam",
+              "es": "Nombre de punto de acceso"
+            }
+          }
+        ]
+      },
+      {
+        "id": "clients_connected",
+        "title": {
+          "en": "!{{C|Disc}}onnected Clients",
+          "nl": "!{{A|Geen a}}pparaten verbonden",
+          "es": "!{{C|Disc}}onnected Clients"
+        }
+      },
+      {
+        "id": "ap_has_clients_connected",
+        "title": {
+          "en": "AP has !{{|no}} clients",
+          "nl": "AP heeft !{{|geen}} apparaten",
+          "es": "AP has !{{|no}} clients"
+        },
+        "args": [
+          {
+            "name": "accessPoint",
+            "type": "autocomplete",
+            "placeholder": {
+              "en": "Accesspoint name",
+              "nl": "Accesspoint naam",
+              "es": "Nombre de punto de acceso"
+            }
+          }
+        ]
+      }
     ]
+  },
+  "drivers": [
+    {
+      "id": "wifi-client",
+      "name": {
+        "en": "Wifi Client",
+        "nl": "Wifi Client",
+        "es": "Cliente Wifi"
+      },
+      "mobile": {
+        "components": [
+          {
+            "id": "icon"
+          },
+          {
+            "id": "sensor",
+            "capabilities": [
+              "alarm_connected",
+              "measure_signal",
+              "measure_rssi"
+            ],
+            "options": {
+              "icons": {
+                "alarm_connected": "assets/connected.svg",
+                "measure_signal": "assets/signal.svg",
+                "measure_rssi": "assets/rssi.svg"
+              },
+              "alarm_connected": {
+                "noblink": false,
+                "invert": true,
+                "label": {
+                  "true": {
+                    "en": "Connected",
+                    "es": "Conectado"
+                  },
+                  "false": {
+                    "en": "Disconnected",
+                    "es": "Desconectado"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "images": {
+        "large": "drivers/wifi-client/assets/images/large.jpg",
+        "small": "drivers/wifi-client/assets/images/small.jpg"
+      },
+      "class": "sensor",
+      "capabilities": [
+        "alarm_connected",
+        "measure_rssi",
+        "measure_signal"
+      ],
+      "pair": [
+        {
+          "id": "list_clients",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_clients"
+          }
+        },
+        {
+          "id": "add_clients",
+          "template": "add_devices"
+        }
+      ]
+    }
+  ]
 }
