@@ -1,0 +1,17 @@
+{
+  "2.0.4": {
+    "en": "Added icons to custom capabilities (change in Homey 2.0)"
+  },
+  "2.0.3": {
+    "en": "Bugfix: Fix triggers 'first device online' and 'last device offline'"
+  },
+  "2.0.2": {
+    "en": "Bugfix release. Upon initial installation, it failed to start the app, due to uninitialized settings."
+  },
+  "2.0.1": {
+    "en": "Added triggers for non-paired devices (guests) (Usergroup token is provided too (if known)) and added SSID to connected triggers"
+  },
+  "2.0.0": {
+    "en": "Rewrite of app for SDKv2. Now using another library for unifi connectivity, hopefully fixing reconnects."
+  }
+}
