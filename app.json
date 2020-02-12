@@ -18,6 +18,10 @@
     "category": [
         "security"
     ],
+    "bugs": {
+        "url": "https://github.com/mnederlof/com.ubnt.unifi/issues"
+    },
+    "source": "https://github.com/mnederlof/com.ubnt.unifi",
     "images": {
         "large": "/assets/images/large.png",
         "small": "/assets/images/small.png"
