@@ -45,6 +45,7 @@ class UnifiDriver extends Homey.Driver {
             'first_device_connected': ['accessPoint'],
             'last_device_disconnected': ['accessPoint'],
             'wifi_client_roamed_to_ap': ['accessPoint'],
+			'wifi_client_roamed_from_ap': ['accessPoint_prev'],
             'condition.ap_has_clients_connected': ['accessPoint'],
             'condition.wifi_client_connected_with_ap': ['accessPoint']
         }
@@ -200,6 +201,7 @@ class UnifiDriver extends Homey.Driver {
             'wifi_client_signal_changed',
             'wifi_client_roamed',
             'wifi_client_roamed_to_ap',
+			'wifi_client_roamed_from_ap',
             'wifi_client_connected',
             'wifi_client_disconnected'
         ];
@@ -448,46 +450,51 @@ class UnifiDriver extends Homey.Driver {
 
     updateClientList () {
         this.log('updateClientList called');
-        this.unifi.get('stat/sta').then(res => {
-            let devices = {}
-            res.data.forEach(client => {
-                if (client.is_wired) return;
-                this._debug(`Got client back ${client.name}/${client.hostname} with mac ${client.mac}, idle:`, client.idletime, 'proto:', client.radio_proto)
+		
+		if( this.firstAPPollDone ) { // only execute, if updateAccessPointList ran, without it the devices get AP = none thats triggers flows because of the change
+			this.unifi.get('stat/sta').then(res => {
+				let devices = {}
+				res.data.forEach(client => {
+					if (client.is_wired) return;
+					this._debug(`Got client back ${client.name}/${client.hostname} with mac ${client.mac}, idle:`, client.idletime, 'proto:', client.radio_proto)
 
-                let name = client.name
-                if (typeof name === 'undefined') name = client.hostname;
-                let signal = Math.min(45, Math.max(parseFloat(client.rssi), 5));
-                signal = (signal - 5) / 40 * 99;
+					let name = client.name
+					if (typeof name === 'undefined') name = client.hostname;
+					let signal = Math.min(45, Math.max(parseFloat(client.rssi), 5));
+					signal = (signal - 5) / 40 * 99;
 
-                let rssi = parseFloat(client.rssi) - 95;
+					let rssi = parseFloat(client.rssi) - 95;
 
-                devices[client.mac] = {
-                    'name': name,
-                    'rssi': parseInt(rssi.toPrecision(2)),
-                    'signal': parseInt(signal),
-                    'ap_mac': client.ap_mac,
-                    'essid': client.essid,
-                    'roam_count': client.roam_count,
-                    'radio_proto': client.radio_proto,
-                    'idletime': client.idletime,
-                    'usergroup': this.getUsergroupName(client.usergroup_id)
-                };
-            });
+					devices[client.mac] = {
+						'name': name,
+						'rssi': parseInt(rssi.toPrecision(2)),
+						'signal': parseInt(signal),
+						'ap_mac': client.ap_mac,
+						'essid': client.essid,
+						'roam_count': client.roam_count,
+						'radio_proto': client.radio_proto,
+						'idletime': client.idletime,
+						'usergroup': this.getUsergroupName(client.usergroup_id)
+					};
+				});
 
-            this.checkGuestTriggers(devices);
-            this.onlineClientList = devices;
+				this.checkGuestTriggers(devices);
+				this.onlineClientList = devices;
 
-            this.sendDeviceUpdates();
-            this.updateLastPoll();
+				this.sendDeviceUpdates();
+				this.updateLastPoll();
 
-            // Update firstPollDone, as we successfully received devices
-            this.firstPollDone = true;
-        })
-        .catch(err => {
-            this._debug('Error while fetching client list:');
-            this._debug(err);
-            this.disconnect();
-        });
+				// Update firstPollDone, as we successfully received devices
+				this.firstPollDone = true;
+			})
+			.catch(err => {
+				this._debug('Error while fetching client list:');
+				this._debug(err);
+				this.disconnect();
+			});
+		} else {
+			this.log('updateClientList postponed, wait for getting AccessPointList first');
+		}
     }
 
     updateAccessPointList() {
@@ -505,6 +512,9 @@ class UnifiDriver extends Homey.Driver {
                 this._debug(`Discovered AP ${accessPoint.name} (${accessPoint.mac})`)
             })
             this.updateLastPoll();
+			
+			// Update firstAPPollDone, as we successfully received Accesspoints
+            this.firstAPPollDone = true;
         })
         .catch(err => {
             this._debug('Error while fetching ap list');

@@ -12,13 +12,22 @@ class UnifiWifiClientDevice extends Homey.Device {
         this.log('store:', this.getStore());
 
         this.log('this.name:', this.name);
+		
+		// ADD MISSING CAPABILITIES; maybe there is a better way that I don't know off
+		if (!this.hasCapability('ap_current')) {
+			this.addCapability('ap_current');
+		}
+		if (!this.hasCapability('ap_previous')) {
+			this.addCapability('ap_previous');
+		}
 
         this._online = this.getCapabilityValue('alarm_connected');
         this.state = {
             'name': '<pending>',
             'rssi': this.getCapabilityValue('measure_rssi'),
             'signal': this.getCapabilityValue('measure_signal'),
-            'ap_mac': null,
+            'ap_mac': this.getCapabilityValue('ap_current'),
+			'ap_mac_prev': this.getCapabilityValue('ap_previous'),
             'essid': '',
             'roam_count': 0,
             'radio_proto': '',
@@ -34,18 +43,23 @@ class UnifiWifiClientDevice extends Homey.Device {
             this.setCapabilityValue(key, value);
 
             let tokens = {
-                rssi: this.state['rssi'],
-                signal: this.state['signal'],
-                radio_proto: this.state['radio_proto'],
-                essid: this.state['essid']
-            };
+                rssi				: this.state['rssi'],
+                signal				: this.state['signal'],
+                radio_proto			: this.state['radio_proto'],
+                essid				: this.state['essid'],
+				accessPoint			: this.getDriver().getAccessPointName(this.state['ap_mac']),
+				accessPoint_prev	: this.getDriver().getAccessPointName(this.state['ap_mac_prev'])
+				};
+				
             if (key == 'alarm_connected') {
                 let deviceTrigger = 'wifi_client_connected';
                 let conditionTrigger = 'a_client_connected';
                 if (value === false) {
                     deviceTrigger = 'wifi_client_disconnected';
                     conditionTrigger = 'a_client_disconnected';
-                    tokens = {}
+                    tokens = {
+						accessPoint_prev: this.getDriver().getAccessPointName(this.state['ap_mac_prev'])
+					}
                 }
 
                 // Trigger wifi_client_(dis-)connected
@@ -53,9 +67,11 @@ class UnifiWifiClientDevice extends Homey.Device {
 
                 // Trigger a_client_(dis-)connected
                 tokens = {
-                    mac: this.getData().id,
-                    name: this.getName(),
-                    essid: this.state['essid']
+                    mac					: this.getData().id,
+                    name				: this.getName(),
+                    essid				: this.state['essid'],
+					accessPoint			: this.getDriver().getAccessPointName(this.state['ap_mac']),
+					accessPoint_prev	: this.getDriver().getAccessPointName(this.state['ap_mac_prev'])
                 }
                 this.getDriver().triggerFlow(conditionTrigger, tokens, this);
             }
@@ -74,19 +90,25 @@ class UnifiWifiClientDevice extends Homey.Device {
         this._updateProperty('alarm_connected', true);
         this._updateProperty('measure_signal', state['signal'])
         this._updateProperty('measure_rssi', state['rssi'])
+		this._updateProperty('ap_current', this.getDriver().getAccessPointName(state['ap_mac']) )
 
         // Stop further processing if we have no connected mac.
         if (oldState['ap_mac'] === null || this.state['ap_mac'] === null) return;
 
         // Check if we roamed to another AP
         if (this.state['ap_mac'] != oldState['ap_mac']) {
+			this._updateProperty('ap_previous', this.getDriver().getAccessPointName(oldState['ap_mac']) )
+			this.state['ap_mac_prev'] = oldState['ap_mac']
+			
             let tokens = {
-                'accessPoint': this.getDriver().getAccessPointName(this.state['ap_mac']),
-                'roam_count': this.state['roam_count'],
-                'radio_proto': this.state['radio_proto']
+                'accessPoint'      : this.getDriver().getAccessPointName(this.state['ap_mac']),
+				'accessPoint_prev' : this.getDriver().getAccessPointName(this.state['ap_mac_prev']),
+                'roam_count'       : this.state['roam_count'],
+                'radio_proto'      : this.state['radio_proto']
             };
             this.getDriver().triggerFlow('wifi_client_roamed', tokens, this);
             this.getDriver().triggerFlow('wifi_client_roamed_to_ap', tokens, this);
+			this.getDriver().triggerFlow('wifi_client_roamed_from_ap', tokens, this);
         }
     }
 
@@ -95,8 +117,14 @@ class UnifiWifiClientDevice extends Homey.Device {
         if (this.getCapabilityValue('alarm_connected') == false) return;
 
         this.log(`[${this.name}] Set device to offline`)
-        this.state.ap_mac = null;
-        this._updateProperty('alarm_connected', false);
+        
+		this.state.ap_prev = this.state.ap_mac;
+		this._updateProperty('ap_previous', this.getDriver().getAccessPointName(this.state['ap_mac']) )
+		
+		this.state.ap_mac = null;
+        this._updateProperty('ap_current', null );
+		
+		this._updateProperty('alarm_connected', false);
     }
 
     isOnline() {
