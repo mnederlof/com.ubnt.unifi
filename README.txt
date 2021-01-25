@@ -1,3 +1,10 @@
+!!
+
+CODE IN THIS REPOSITORY IS OUTDATED. DEVELOPMENT HAS BEEN TRANSFERRED TO https://github.com/steffjenl/com.ubnt.unifi
+
+!!
+
+
 This app adds support for presence detection based on (wifi) clients connected to the UniFi Controller on your Homey.
 
 Device triggers:
