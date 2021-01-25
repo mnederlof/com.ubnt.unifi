@@ -75,6 +75,28 @@
             "max": 0,
             "step": 1,
             "icon": "./assets/rssi.svg"
+        },
+		"ap_current": {
+            "type": "string",
+            "title": {
+                "en": "Current AP",
+                "nl": "Huidig AP",
+                "es": "AP actual"
+            },
+            "getable": true,
+            "setable": false,
+            "icon": "./assets/accesspoint.svg"
+        },
+		"ap_previous": {
+            "type": "string",
+            "title": {
+                "en": "Previous AP",
+                "nl": "Vorig AP",
+                "es": "AP anterior"
+            },
+            "getable": true,
+            "setable": false,
+            "icon": "./assets/accesspoint.svg"
         }
     },
     "flow": {
@@ -95,6 +117,34 @@
                 ],
                 "tokens": [
                     {
+                        "name": "accessPoint",
+                        "type": "string",
+                        "title": {
+							"en": "Current AP",
+							"nl": "Huidig AP",
+							"es": "AP actual"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    },
+					{
+                        "name": "accessPoint_prev",
+                        "type": "string",
+                        "title": {
+							"en": "Previous AP",
+							"nl": "Vorig AP",
+							"es": "AP anterior"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    },
+					{
                         "name": "rssi",
                         "type": "number",
                         "title": {
@@ -151,6 +201,22 @@
                         "type": "device",
                         "filter": "driver_id=wifi-client"
                     }
+				],
+				"tokens": [
+                    {
+                        "name": "accessPoint_prev",
+                        "type": "string",
+                        "title": {
+							"en": "Previous AP",
+							"nl": "Vorig AP",
+							"es": "AP anterior"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    }
                 ]
             },
             {
@@ -169,6 +235,34 @@
                 ],
                 "tokens": [
                     {
+                        "name": "accessPoint",
+                        "type": "string",
+                        "title": {
+							"en": "Current AP",
+							"nl": "Huidig AP",
+							"es": "AP actual"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    },
+					{
+                        "name": "accessPoint_prev",
+                        "type": "string",
+                        "title": {
+							"en": "Previous AP",
+							"nl": "Vorig AP",
+							"es": "AP anterior"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    },
+					{
                         "name": "rssi",
                         "type": "number",
                         "title": {
@@ -219,9 +313,97 @@
                         "name": "accessPoint",
                         "type": "string",
                         "title": {
-                            "en": "AP",
-                            "nl": "AP",
-                            "es": "AP"
+							"en": "Current AP",
+							"nl": "Huidig AP",
+							"es": "AP actual"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    },
+					{
+                        "name": "accessPoint_prev",
+                        "type": "string",
+                        "title": {
+							"en": "Previous AP",
+							"nl": "Vorig AP",
+							"es": "AP anterior"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    },
+                    {
+                        "name": "radio_proto",
+                        "type": "string",
+                        "title": {
+                            "en": "Proto",
+                            "nl": "Proto",
+                            "es": "Proto"
+                        },
+                        "example": "ac"
+                    },
+                    {
+                        "name": "roam_count",
+                        "type": "number",
+                        "title": {
+                            "en": "Roam count",
+                            "nl": "Roam count",
+                            "es": "Roam count"
+                        },
+                        "example": 3
+                    }
+                ]
+            },
+			{
+                "id": "wifi_client_roamed_from_ap",
+                "title": {
+                    "en": "Roams from AP",
+                    "nl": "Zwerft van AP",
+                    "es": "Ruta de AP"
+                },
+                "args": [
+                    {
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=wifi-client"
+                    },
+                    {
+                        "name": "accessPoint_prev",
+                        "type": "autocomplete",
+                        "placeholder": {
+                            "en": "Accesspoint name",
+                            "nl": "Accesspoint naam",
+                            "es": "Nombre del punto de acceso"
+                        }
+                    }
+                ],
+                "tokens": [
+                    {
+                        "name": "accessPoint",
+                        "type": "string",
+                        "title": {
+							"en": "Current AP",
+							"nl": "Huidig AP",
+							"es": "AP actual"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    },
+					{
+                        "name": "accessPoint_prev",
+                        "type": "string",
+                        "title": {
+							"en": "Previous AP",
+							"nl": "Vorig AP",
+							"es": "AP anterior"
                         },
                         "example": {
                             "en": "ap123",
@@ -279,9 +461,23 @@
                         "name": "accessPoint",
                         "type": "string",
                         "title": {
-                            "en": "AP",
-                            "nl": "AP",
-                            "es": "AP"
+							"en": "Current AP",
+							"nl": "Huidig AP",
+							"es": "AP actual"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    },
+					{
+                        "name": "accessPoint_prev",
+                        "type": "string",
+                        "title": {
+							"en": "Previous AP",
+							"nl": "Vorig AP",
+							"es": "AP anterior"
                         },
                         "example": {
                             "en": "ap123",
@@ -320,6 +516,34 @@
                 },
                 "tokens": [
                     {
+                        "name": "accessPoint",
+                        "type": "string",
+                        "title": {
+							"en": "Current AP",
+							"nl": "Huidig AP",
+							"es": "AP actual"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    },
+					{
+                        "name": "accessPoint_prev",
+                        "type": "string",
+                        "title": {
+							"en": "Previous AP",
+							"nl": "Vorig AP",
+							"es": "AP anterior"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    },
+					{
                         "name": "mac",
                         "type": "string",
                         "title": {
@@ -370,6 +594,34 @@
                 },
                 "tokens": [
                     {
+                        "name": "accessPoint",
+                        "type": "string",
+                        "title": {
+							"en": "Current AP",
+							"nl": "Huidig AP",
+							"es": "AP actual"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    },
+					{
+                        "name": "accessPoint_prev",
+                        "type": "string",
+                        "title": {
+							"en": "Previous AP",
+							"nl": "Vorig AP",
+							"es": "AP anterior"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    },
+					{
                         "name": "mac",
                         "type": "string",
                         "title": {
@@ -418,6 +670,34 @@
                 },
                 "tokens": [
                     {
+                        "name": "accessPoint",
+                        "type": "string",
+                        "title": {
+							"en": "Current AP",
+							"nl": "Huidig AP",
+							"es": "AP actual"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    },
+					{
+                        "name": "accessPoint_prev",
+                        "type": "string",
+                        "title": {
+							"en": "Previous AP",
+							"nl": "Vorig AP",
+							"es": "AP anterior"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    },
+					{
                         "name": "name",
                         "type": "string",
                         "title": {
@@ -488,6 +768,34 @@
                 },
                 "tokens": [
                     {
+                        "name": "accessPoint",
+                        "type": "string",
+                        "title": {
+							"en": "Current AP",
+							"nl": "Huidig AP",
+							"es": "AP actual"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    },
+					{
+                        "name": "accessPoint_prev",
+                        "type": "string",
+                        "title": {
+							"en": "Previous AP",
+							"nl": "Vorig AP",
+							"es": "AP anterior"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    },
+					{
                         "name": "mac",
                         "type": "string",
                         "title": {
@@ -550,6 +858,34 @@
                 },
                 "tokens": [
                     {
+                        "name": "accessPoint",
+                        "type": "string",
+                        "title": {
+							"en": "Current AP",
+							"nl": "Huidig AP",
+							"es": "AP actual"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    },
+					{
+                        "name": "accessPoint_prev",
+                        "type": "string",
+                        "title": {
+							"en": "Previous AP",
+							"nl": "Vorig AP",
+							"es": "AP anterior"
+                        },
+                        "example": {
+                            "en": "ap123",
+                            "nl": "ap123",
+                            "es": "ap123"
+                        }
+                    },
+					{
                         "name": "mac",
                         "type": "string",
                         "title": {
@@ -622,7 +958,8 @@
                 "id": "wifi_client_connected_with_ap",
                 "title": {
                     "en": "!{{C|Disc}}onnected with accesspoint",
-                    "nl": "!{{V|Niet v}}erbonden met accesspoint"
+                    "nl": "!{{V|Niet v}}erbonden met accesspoint",
+					"es": "!{{C|Disc}}onnected with accesspoint"
                 },
                 "args": [
                     {
@@ -685,14 +1022,15 @@
                     },
                     {
                         "id": "sensor",
-                        "capabilities": [ "alarm_connected",  "measure_signal", "measure_rssi" ],
+                        "capabilities": [ "alarm_connected",  "measure_signal", "measure_rssi", "ap_current", "ap_previous" ],
                         "options": {
                             "icons": {
                                 "alarm_connected": "assets/connected.svg",
                                 "measure_signal": "assets/signal.svg",
-                                "measure_rssi": "assets/rssi.svg"
+                                "measure_rssi": "assets/rssi.svg",
+								"ap_current": "assets/accesspoint.svg",
+								"ap_previousr": "assets/accesspoint.svg"
                             },
-
                             "alarm_connected": {
                                 "noblink": false,
                                 "invert": true,
@@ -716,7 +1054,7 @@
                 "small": "drivers/wifi-client/assets/images/small.jpg"
             },
             "class": "sensor",
-            "capabilities": [ "alarm_connected", "measure_rssi",  "measure_signal" ],
+            "capabilities": [ "alarm_connected", "measure_rssi",  "measure_signal", "ap_current", "ap_previous"  ],
             "pair": [
                 {
                     "id": "list_clients",
